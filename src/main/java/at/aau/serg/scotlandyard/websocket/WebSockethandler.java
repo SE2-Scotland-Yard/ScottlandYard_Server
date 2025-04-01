@@ -3,6 +3,7 @@ package at.aau.serg.scotlandyard.websocket;
 import org.springframework.web.socket.*;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
+import java.io.IOException;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class WebSockethandler extends TextWebSocketHandler {
@@ -31,9 +32,11 @@ public class WebSockethandler extends TextWebSocketHandler {
     private void broadcastMessage(String message) {
         for (WebSocketSession session : sessions) {
             try {
-                session.sendMessage(new TextMessage(message));
-            } catch (Exception e) {
-                System.err.println("Error sending message: " + e.getMessage());
+                if (session.isOpen()) {
+                    session.sendMessage(new TextMessage(message));
+                }
+            } catch (IOException e) {
+                System.err.println("Error sending message to " + session.getId() + ": " + e.getMessage());
             }
         }
     }
