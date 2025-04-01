@@ -18,22 +18,22 @@ public class WebSockethandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         sessions.add(session);
-        broadcastMessage("Player joined: " + session.getId());
-        logger.info("Player connected: {}", session.getId());
+        broadcastMessage("Player joined: " + validateSessionId(session.getId()));
+        logger.info("Player connected: {}", validateSessionId(session.getId()));
         checkAndStartGame();
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
-        logger.info("Received from {}: {}", session.getId(), message.getPayload());
-        broadcastMessage("Player " + session.getId() + ": " + message.getPayload());
+        logger.info("Received message from {}", validateSessionId(session.getId()));
+        broadcastMessage("Player " + validateSessionId(session.getId()) + ": message received");
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         sessions.remove(session);
-        broadcastMessage("Player left: " + session.getId());
-        logger.info("Player disconnected: {}", session.getId());
+        broadcastMessage("Player left: " + validateSessionId(session.getId()));
+        logger.info("Player disconnected: {}", validateSessionId(session.getId()));
     }
 
     private void broadcastMessage(String message) {
@@ -43,7 +43,7 @@ public class WebSockethandler extends TextWebSocketHandler {
                     session.sendMessage(new TextMessage(message));
                 }
             } catch (IOException e) {
-                logger.error("Error sending message to {}: {}", session.getId(), e.getMessage());
+                logger.error("Error sending message to {}: {}", validateSessionId(session.getId()), e.getMessage());
             }
         }
     }
@@ -80,4 +80,8 @@ public class WebSockethandler extends TextWebSocketHandler {
         logger.info("Game has started.");
         broadcastMessage("Game has started.");
     }
+
+    private String validateSessionId(String sessionId) {
+        return sessionId.replaceAll("[\n\r]", "_");
+        }
 }
