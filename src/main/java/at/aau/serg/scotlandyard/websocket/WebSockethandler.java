@@ -12,11 +12,14 @@ public class WebSockethandler extends TextWebSocketHandler {
     private final CopyOnWriteArrayList<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
     private final Logger logger = LoggerFactory.getLogger(WebSockethandler.class);
 
+    private static final int REQUIRED_PLAYERS = 4;
+
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         sessions.add(session);
         broadcastMessage("Player joined: " + session.getId());
         logger.info("Player connected: {}", session.getId());
+        checkAndStartGame();
     }
 
     @Override
@@ -42,5 +45,31 @@ public class WebSockethandler extends TextWebSocketHandler {
                 logger.error("Error sending message to {}: {}", session.getId(), e.getMessage());
             }
         }
+    }
+
+    private void checkAndStartGame() {
+        if (sessions.size() == REQUIRED_PLAYERS) {
+            startGame();
+        }
+    }
+
+    private void startGame() {
+        logger.info("Starting game with {} players.", REQUIRED_PLAYERS);
+        broadcastMessage("Game is starting!");
+        assignPlayerRoles();
+        initializeGameState();
+        startTheGame();
+    }
+
+    private void assignPlayerRoles() {
+        logger.info("Assigning player roles.");
+    }
+
+    private void initializeGameState() {
+        logger.info("Initializing game state.");
+    }
+
+    private void startTheGame() {
+        logger.info("Game has started.");
     }
 }
