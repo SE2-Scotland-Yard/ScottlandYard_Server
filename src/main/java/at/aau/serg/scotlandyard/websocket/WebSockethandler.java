@@ -12,7 +12,8 @@ public class WebSockethandler extends TextWebSocketHandler {
     private final CopyOnWriteArrayList<WebSocketSession> sessions = new CopyOnWriteArrayList<>();
     private final Logger logger = LoggerFactory.getLogger(WebSockethandler.class);
 
-    private static final int REQUIRED_PLAYERS = 4;
+    private static final int MIN_PLAYERS = 3;
+    private static final int MAX_PLAYERS = 6;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
@@ -48,13 +49,17 @@ public class WebSockethandler extends TextWebSocketHandler {
     }
 
     private void checkAndStartGame() {
-        if (sessions.size() == REQUIRED_PLAYERS) {
+        if (sessions.size() >= MIN_PLAYERS && sessions.size() <= MAX_PLAYERS) {
+            startGame();
+        } else if (sessions.size() > MAX_PLAYERS) {
+            logger.info("Maximum player count reached. Game is starting.");
+            broadcastMessage("Maximum player count reached. Game is starting.");
             startGame();
         }
     }
 
     private void startGame() {
-        logger.info("Starting game with {} players.", REQUIRED_PLAYERS);
+        logger.info("Starting game with {} players.", sessions.size());
         broadcastMessage("Game is starting!");
         assignPlayerRoles();
         initializeGameState();
@@ -63,13 +68,16 @@ public class WebSockethandler extends TextWebSocketHandler {
 
     private void assignPlayerRoles() {
         logger.info("Assigning player roles.");
+        broadcastMessage("Assigning player roles!");
     }
 
     private void initializeGameState() {
         logger.info("Initializing game state.");
+        broadcastMessage("Initializing game state.");
     }
 
     private void startTheGame() {
         logger.info("Game has started.");
+        broadcastMessage("Game has started.");
     }
 }
