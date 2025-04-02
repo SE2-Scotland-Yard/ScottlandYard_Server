@@ -7,9 +7,9 @@ public class MrX extends Player {
 
     public MrX() {
         super();
-        ticketsLeft.put(Transport.TAXI,0);
-        ticketsLeft.put(Transport.BUS,0);
-        ticketsLeft.put(Transport.TRAIN,0);
+        ticketsLeft.put(Transport.taxi,0);
+        ticketsLeft.put(Transport.bus,0);
+        ticketsLeft.put(Transport.underground,0);
         ticketsLeft.put(Transport.BOAT,5);
     }
 }
