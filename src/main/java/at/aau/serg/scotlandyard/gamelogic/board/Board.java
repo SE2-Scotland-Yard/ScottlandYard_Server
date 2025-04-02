@@ -1,30 +1,29 @@
 package at.aau.serg.scotlandyard.gamelogic.board;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.Scanner;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Board {
+    private Map<Integer, List<Edge>> adjacencyList = new HashMap<>();
 
-    //nodes are the integers 1-199
-    ArrayList<Edge> edges = new ArrayList<>();
     public Board() {
-        try {
-            File myObj = new File("edges.csv");
-            Scanner myReader = new Scanner(myObj);
-            myReader.nextLine();
-            while (myReader.hasNextLine()) {
-                String[] data = myReader.nextLine().split(",");
-                Transport type = Transport.valueOf(data[0].toUpperCase());
-                int x = Integer.parseInt(data[1]);
-                int y = Integer.parseInt(data[2]);
-                edges.add(new Edge(x, y, type));
-            }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
+        ObjectMapper mapper = new ObjectMapper();
+        try (InputStream input = getClass().getClassLoader().getResourceAsStream("board.json")) {
+            TypeReference<Map<Integer, List<Edge>>> typeRef = new TypeReference<>() {};
+            adjacencyList = mapper.readValue(input, typeRef);
+        } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Edge> getConnectionsFrom(int node) {
+        return adjacencyList.getOrDefault(node, Collections.emptyList());
     }
 }
