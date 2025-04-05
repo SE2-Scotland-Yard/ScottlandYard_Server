@@ -15,12 +15,24 @@ public class AuthService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
 
+    private static final int MAX_USERNAME_LENGTH = 20;
+
     public AuthService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     public String register(String username, String password) {
+
+        if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()) {
+            return "Username and password must not be empty";
+        }
+
+
+        if (username.length() > MAX_USERNAME_LENGTH) {
+            return "Username cannot be longer than " + MAX_USERNAME_LENGTH + " characters";
+        }
+
         if (userRepository.findByUsername(username).isPresent()) {
             return "Username already exists";
         }
