@@ -81,7 +81,7 @@ public class WebSockethandler extends TextWebSocketHandler {
         broadcastMessage("Game has started.");
     }
 
-    private String validateSessionId(String sessionId) {
+    public String validateSessionId(String sessionId) {
         return sessionId.replaceAll("[\n\r]", "_");
         }
 }
