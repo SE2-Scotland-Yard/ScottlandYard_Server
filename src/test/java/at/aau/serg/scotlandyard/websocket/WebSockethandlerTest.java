@@ -30,6 +30,7 @@ class WebSockethandlerTest {
         when(session2.isOpen()).thenReturn(true);
     }
 
+    
     @Test
     void testAfterConnectionEstablished_AddsSessionAndBroadcasts() throws Exception {
         handler.afterConnectionEstablished(session1);
