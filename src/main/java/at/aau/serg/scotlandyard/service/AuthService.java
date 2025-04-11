@@ -1,7 +1,7 @@
 package at.aau.serg.scotlandyard.service;
 
 import at.aau.serg.scotlandyard.model.User;
-import at.aau.serg.scotlandyard.repository.UserRepository;
+import at.aau.serg.scotlandyard.repository.UserRepositoryJson;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -12,12 +12,13 @@ import java.util.Optional;
 @Service
 public class AuthService {
 
-    private final UserRepository userRepository;
+    private final UserRepositoryJson userRepository;
+
     private final BCryptPasswordEncoder passwordEncoder;
 
     private static final int MAX_USERNAME_LENGTH = 20;
 
-    public AuthService(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    public AuthService(UserRepositoryJson userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
