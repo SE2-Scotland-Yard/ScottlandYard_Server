@@ -51,6 +51,9 @@ public class GameController {
         GameState game = gameManager.getGame(gameId);
         if (game == null) return "Spiel nicht gefunden!";
         game.movePlayer(name, to);
+        if(game.gameWon(name, to)){
+            return "Spieler" + name + "hat Mr. X gefangen in Spiel" + gameId;
+        }
         return "Spieler " + name + " bewegt sich zu " + to + " in Spiel " + gameId;
     }
 }

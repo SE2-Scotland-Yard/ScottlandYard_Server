@@ -1,6 +1,7 @@
 package at.aau.serg.scotlandyard.gamelogic;
 
 import at.aau.serg.scotlandyard.gamelogic.board.Board;
+import at.aau.serg.scotlandyard.gamelogic.player.MrX;
 import at.aau.serg.scotlandyard.gamelogic.player.Player;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +34,17 @@ public class GameState {
         if (p != null && p.isValidMove(to)) {
             //todo implement
         }
+    }
+
+    public boolean gameWon(String name, int to) {
+        Player mrX = new MrX();
+        for (Player p : players.values()) {
+            if (p instanceof MrX){
+                mrX =  p;
+            }
+        }
+        return mrX.pos == to;
+
     }
 
     public Board getBoard() {
