@@ -2,9 +2,6 @@ package at.aau.serg.scotlandyard.controller;
 
 import at.aau.serg.scotlandyard.gamelogic.GameManager;
 import at.aau.serg.scotlandyard.gamelogic.GameState;
-import at.aau.serg.scotlandyard.gamelogic.player.Detective;
-import at.aau.serg.scotlandyard.gamelogic.player.MrX;
-import at.aau.serg.scotlandyard.gamelogic.player.Player;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,23 +14,6 @@ public class GameController {
 
     public GameController(GameManager gameManager) {
         this.gameManager = gameManager;
-    }
-
-    @PostMapping("/add")
-    public String addPlayer(@RequestParam String gameId,
-                            @RequestParam String name,
-                            @RequestParam String type) {
-
-        GameState game = gameManager.getOrCreateGame(gameId);
-        Player player = switch (type.toLowerCase()) {
-            case "mrx" -> new MrX();
-            case "detective" -> new Detective();
-            default -> null;
-        };
-        if (player == null) return "Ungültiger Typ";
-
-        game.addPlayer(name, player);
-        return "Spieler " + name + " zu Spiel " + gameId + " hinzugefügt!";
     }
 
     @GetMapping("/allowedMoves")
@@ -54,4 +34,3 @@ public class GameController {
         return "Spieler " + name + " bewegt sich zu " + to + " in Spiel " + gameId;
     }
 }
-
