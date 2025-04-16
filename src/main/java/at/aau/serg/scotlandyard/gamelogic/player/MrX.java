@@ -25,5 +25,14 @@ public class MrX extends Player {
         return new PlayerTickets(initialTickets);
     }
 
+    public boolean canUseDoubleTicket() {
+        return doubleTicket > 0;
+    }
 
+    public void useDoubleTicket() {
+        if (!canUseDoubleTicket()) {
+            throw new IllegalStateException("No DOUBLE tickets left!");
+        }
+        doubleTicket--;
+    }
 }
