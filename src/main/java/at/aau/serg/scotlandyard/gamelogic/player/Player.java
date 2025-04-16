@@ -17,7 +17,7 @@ public abstract class Player {
 
     }
 
-    public boolean isValidMove(int to, Ticket ticket) {
+    public boolean isValidMove(int to, Ticket ticket, Board board) {
         if (!tickets.hasTicket(ticket)) {
             return false;
         }
@@ -25,7 +25,7 @@ public abstract class Player {
         return false; //Todo Implement
     }
     public void move(int to, Ticket ticket) {
-        if (isValidMove(to, ticket)) {
+        if (isValidMove(to, ticket, new Board())) {
             tickets.useTicket(ticket);
             pos = to;
         } else {
@@ -41,4 +41,23 @@ public abstract class Player {
         return pos;
     }
 
+    public List<Integer> allowedNextMoves(Board board) {
+        List<Integer> allowedMoves = new ArrayList<>();
+        for (Edge edge : board.getConnectionsFrom(this.pos)) {
+            Ticket requiredTicket = transportToTicket(edge.getTicket());
+            if (tickets.hasTicket(requiredTicket)) {
+                allowedMoves.add(edge.getTo());
+            }
+        }
+        return allowedMoves;
+    }
+
+    private Ticket transportToTicket(Ticket ticket) {
+        switch (ticket) {
+            case TAXI:    return Ticket.TAXI;
+            case BUS:     return Ticket.BUS;
+            case TRAIN:   return Ticket.TRAIN;
+            default:      throw new IllegalArgumentException("Unbekanntes Transportmittel: " + ticket);
+        }
+    }
 }
