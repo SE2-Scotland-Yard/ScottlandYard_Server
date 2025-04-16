@@ -3,22 +3,25 @@ package at.aau.serg.scotlandyard.gamelogic.player;
 import at.aau.serg.scotlandyard.gamelogic.board.Board;
 import at.aau.serg.scotlandyard.gamelogic.board.Edge;
 import at.aau.serg.scotlandyard.gamelogic.player.tickets.PlayerTickets;
+import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
 
 import java.util.*;
 
 public abstract class Player {
-   private final PlayerTickets tickets;
-    public int pos;
+   protected final PlayerTickets tickets;
+   protected int pos;
 
     public Player(PlayerTickets tickets) {
         this.tickets = tickets;
-        Random rand = new Random();
-        pos = rand.nextInt(199);
+        this.pos = new Random().nextInt(199)+1;
 
     }
 
+    public boolean isValidMove(int to, Ticket ticket) {
+        if (!tickets.hasTicket(ticket)) {
+            return false;
+        }
 
-    public boolean isValidMove(int to){
         return false; //Todo Implement
     }
 
