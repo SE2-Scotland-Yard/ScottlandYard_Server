@@ -24,7 +24,21 @@ public abstract class Player {
 
         return false; //Todo Implement
     }
+    public void move(int to, Ticket ticket) {
+        if (isValidMove(to, ticket)) {
+            tickets.useTicket(ticket);
+            pos = to;
+        } else {
+            throw new IllegalArgumentException("Invalid move!");
+        }
+    }
 
+    public PlayerTickets getTickets() {
+        return tickets;
+    }
 
+    public int getPosition() {
+        return pos;
+    }
 
 }
