@@ -54,9 +54,9 @@ public abstract class Player {
 
     private Ticket transportToTicket(Ticket ticket) {
         switch (ticket) {
-            case TAXI:    return Ticket.TAXI;
-            case BUS:     return Ticket.BUS;
-            case TRAIN:   return Ticket.TRAIN;
+            case taxi:    return Ticket.taxi;
+            case bus:     return Ticket.bus;
+            case underground:   return Ticket.underground;
             default:      throw new IllegalArgumentException("Unbekanntes Transportmittel: " + ticket);
         }
     }
