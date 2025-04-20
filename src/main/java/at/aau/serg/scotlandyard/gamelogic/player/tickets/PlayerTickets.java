@@ -16,7 +16,7 @@ public class PlayerTickets {
 
     public void useTicket(Ticket ticket) {
         if (!hasTicket(ticket)) {
-            throw new IllegalStateException("Spieler hat dieses Ticket nich");
+            throw new IllegalStateException("Spieler hat dieses Ticket nicht");
         }
         tickets.put(ticket, tickets.get(ticket) - 1);
     }
