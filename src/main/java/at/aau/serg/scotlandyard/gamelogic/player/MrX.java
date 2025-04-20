@@ -20,7 +20,7 @@ public class MrX extends Player {
         initialTickets.put(Ticket.bus, 3);
         initialTickets.put(Ticket.underground, 3);
         initialTickets.put(Ticket.BLACK, 5);
-        initialTickets.put(Ticket.DOUBLE, 2);  // Falls Doppelzüge erlaubt sind
+        initialTickets.put(Ticket.DOUBLE, 2);
 
         return new PlayerTickets(initialTickets);
     }
