@@ -28,10 +28,23 @@ public class LobbyController {
     }
 
     @PostMapping("/create")
-    public LobbyState createLobby(@RequestParam boolean isPublic) {
+    public LobbyState createLobby(
+            @RequestParam boolean isPublic,
+            @RequestParam String name
+    ) {
+        // 1) Lobby anlegen
         Lobby lobby = lobbyManager.createLobby(isPublic);
-        return LobbyMapper.toLobbyState(lobby);
+        // 2) Ersteller direkt als Spieler hinzufügen
+        lobby.addPlayer(name);
+
+        // 3)  Zustand broadcasten
+        LobbyState state = LobbyMapper.toLobbyState(lobby);
+        messaging.convertAndSend("/topic/lobby/" + lobby.getGameId(), state);
+
+        // 4) State zurück an den Aufrufer
+        return state;
     }
+
 
     @PostMapping("/{gameId}/join")
     public ResponseEntity<String> joinLobby(@PathVariable String gameId,
@@ -42,18 +55,43 @@ public class LobbyController {
                     .body("Lobby mit der ID " + gameId + " wurde nicht gefunden.");
         }
 
-
         boolean success = lobby.addPlayer(name);
         if (!success) {
-            return ResponseEntity.badRequest().body("Lobby ist voll oder bereits gestartet.");
+            return ResponseEntity.badRequest()
+                    .body("Lobby ist voll oder bereits gestartet.");
         }
 
-        // Broadcast an alle in der Lobby
-        LobbyUpdate update = new LobbyUpdate(gameId, name + " ist der Lobby beigetreten.");
-        messaging.convertAndSend("/topic/lobby/" + gameId, update);
+        System.out.println("WS-Broadcast: /topic/lobby/" + gameId);
+        System.out.println("Spieler in der Lobby: " + lobby.getPlayers());
+
+
+        LobbyState state = LobbyMapper.toLobbyState(lobby);
+        messaging.convertAndSend("/topic/lobby/" + gameId, state);
 
         return ResponseEntity.ok(name + " ist der Lobby " + gameId + " beigetreten.");
     }
+
+    @PostMapping("/{gameId}/leave")
+    public ResponseEntity<String> leaveLobby(
+            @PathVariable String gameId,
+            @RequestParam String name
+    ) {
+        Lobby lobby = lobbyManager.getLobby(gameId);
+        if (lobby == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Lobby nicht gefunden");
+        }
+        lobby.removePlayer(name);
+        // Wenn keine Spieler mehr drin sind, löschen
+        if (lobby.getPlayers().isEmpty()) {
+            lobbyManager.removeLobby(gameId);
+        } else {
+            // sonst Broadcast des neuen Zustands
+            LobbyState state = LobbyMapper.toLobbyState(lobby);
+            messaging.convertAndSend("/topic/lobby/" + gameId, state);
+        }
+        return ResponseEntity.ok(name + " hat die Lobby verlassen");
+    }
+
 
 
     @GetMapping("/public")
