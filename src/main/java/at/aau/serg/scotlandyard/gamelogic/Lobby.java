@@ -10,7 +10,8 @@ public class Lobby {
     private final String gameId;
     private final Set<String> players = new HashSet<>();
     private final Map<String, Boolean> readyStatus = new HashMap<>();
-    private final int minPlayers = 3;
+    private final Map<String, Role> selectedRoles = new HashMap<>();
+    private final int minPlayers = 1;
     private final int maxPlayers = 6;
     private final boolean isPublic;
     private boolean started = false;
@@ -31,6 +32,7 @@ public class Lobby {
 
     public boolean removePlayer(String name) {
         readyStatus.remove(name);
+        selectedRoles.remove(name);
         return players.remove(name);
     }
 
@@ -39,6 +41,18 @@ public class Lobby {
         readyStatus.put(name, true);
         return true;
     }
+
+    public void selectRole(String player, Role role) {
+        if (players.contains(player)) {
+            selectedRoles.put(player, role);
+        }
+    }
+
+    public Role getSelectedRole(String player) {
+        return selectedRoles.get(player);
+    }
+
+
 
     public boolean isPlayerReady(String name) {
         return readyStatus.getOrDefault(name, false);
@@ -77,5 +91,10 @@ public class Lobby {
 
         if(players.size()>=minPlayers) {return true;}else{return false;}
     }
+
+    public Map<String, Role> getAllSelectedRoles() {
+        return selectedRoles;
+    }
+
 }
 

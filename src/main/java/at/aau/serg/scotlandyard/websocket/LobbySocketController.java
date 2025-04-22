@@ -48,10 +48,13 @@ public class LobbySocketController {
 
             GameState game = gameManager.getOrCreateGame(gameId);
             List<String> playerNames = new ArrayList<>(lobby.getPlayers());
-            for (int i = 0; i < playerNames.size(); i++) {
-                Player p = (i == 0) ? new MrX() : new Detective();
-                game.addPlayer(playerNames.get(i), p);
+            for (String name : playerNames) {
+                Role role = lobby.getSelectedRole(name);
+                Player p = (role == Role.MRX) ? new MrX() : new Detective();
+                game.addPlayer(name, p);
             }
+
+
 
             // Spiel gestartet
             LobbyState startedState = LobbyMapper.toLobbyState(lobby);
