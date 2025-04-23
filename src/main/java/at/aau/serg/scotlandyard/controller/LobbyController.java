@@ -6,6 +6,7 @@ import at.aau.serg.scotlandyard.gamelogic.LobbyManager;
 import at.aau.serg.scotlandyard.dto.LobbyState;
 import at.aau.serg.scotlandyard.dto.LobbyMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
@@ -68,7 +69,10 @@ public class LobbyController {
         LobbyState state = LobbyMapper.toLobbyState(lobby);
         messaging.convertAndSend("/topic/lobby/" + gameId, state);
 
-        return ResponseEntity.ok(name + " ist der Lobby " + gameId + " beigetreten.");
+        return ResponseEntity.ok()
+                .contentType(MediaType.TEXT_PLAIN)
+                .body(name + " ist der Lobby " + gameId + " beigetreten.");
+
     }
 
     @PostMapping("/{gameId}/leave")

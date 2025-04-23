@@ -3,6 +3,7 @@ package at.aau.serg.scotlandyard.websocket;
 import at.aau.serg.scotlandyard.dto.ReadyMessage;
 import at.aau.serg.scotlandyard.dto.LobbyState;
 import at.aau.serg.scotlandyard.dto.LobbyMapper;
+import at.aau.serg.scotlandyard.dto.RoleSelectionMessage;
 import at.aau.serg.scotlandyard.gamelogic.*;
 import at.aau.serg.scotlandyard.gamelogic.player.Detective;
 import at.aau.serg.scotlandyard.gamelogic.player.MrX;
@@ -61,4 +62,19 @@ public class LobbySocketController {
             messaging.convertAndSend("/topic/lobby/" + gameId, startedState);
         }
     }
+
+    @MessageMapping("/lobby/role")
+    public void selectRole(RoleSelectionMessage msg) {
+        Lobby lobby = lobbyManager.getLobby(msg.getGameId());
+        if (lobby != null && lobby.getPlayers().contains(msg.getPlayerId())) {
+            lobby.selectRole(msg.getPlayerId(), msg.getRole());
+
+
+            LobbyState state = LobbyMapper.toLobbyState(lobby);
+            messaging.convertAndSend("/topic/lobby/" + msg.getGameId(), state);
+        }
+    }
+
+
+
 }
