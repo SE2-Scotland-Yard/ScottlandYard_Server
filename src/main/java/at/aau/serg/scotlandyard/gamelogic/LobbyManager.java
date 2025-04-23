@@ -8,6 +8,7 @@ import java.util.*;
 public class LobbyManager {
 
     private final Map<String, Lobby> lobbies = new HashMap<>();
+    private final Random random = new Random();
 
     public Lobby getOrCreateLobby(String gameId, boolean isPublic) {
         return lobbies.computeIfAbsent(gameId, id -> new Lobby(id, isPublic));
@@ -53,7 +54,6 @@ public class LobbyManager {
 
     private String generateGameId(int length) {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-        Random random = new Random();
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < length; i++) {
             sb.append(chars.charAt(random.nextInt(chars.length())));
