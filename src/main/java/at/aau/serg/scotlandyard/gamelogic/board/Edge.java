@@ -1,17 +1,19 @@
 package at.aau.serg.scotlandyard.gamelogic.board;
 
+import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
+
 public class Edge {
     private int to;
-    private Transport transport;
+    private Ticket ticket;
 
 
     public Edge() {
     }
 
 
-    public Edge(int to, Transport transport) {
+    public Edge(int to, Ticket ticket) {
         this.to = to;
-        this.transport = transport;
+        this.ticket = ticket;
     }
 
 
@@ -23,16 +25,16 @@ public class Edge {
         this.to = to;
     }
 
-    public Transport getTransport() {
-        return transport;
+    public Ticket getTicket() {
+        return ticket;
     }
 
-    public void setTransport(Transport transport) {
-        this.transport = transport;
+    public void setTransport(Ticket ticket) {
+        this.ticket = ticket;
     }
 
     @Override
     public String toString() {
-        return "Edge{to=" + to + ", transport=" + transport + '}';
+        return "Edge{to=" + to + ", transport=" + ticket + '}';
     }
 }

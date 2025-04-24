@@ -2,7 +2,7 @@ package at.aau.serg.scotlandyard.gamelogic;
 
 import at.aau.serg.scotlandyard.gamelogic.board.Board;
 import at.aau.serg.scotlandyard.gamelogic.board.Edge;
-import at.aau.serg.scotlandyard.gamelogic.board.Transport;
+import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,11 +25,11 @@ public class BoardTest {
         assertNotNull(edges);
         assertEquals(5, edges.size(), "Node 1 should have 5 edges");
 
-        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 8 && e.getTransport() == Transport.taxi));
-        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 9 && e.getTransport() == Transport.taxi));
-        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 46 && e.getTransport() == Transport.bus));
-        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 58 && e.getTransport() == Transport.bus));
-        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 46 && e.getTransport() == Transport.underground));
+        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 8 && e.getTicket() == Ticket.taxi));
+        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 9 && e.getTicket() == Ticket.taxi));
+        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 46 && e.getTicket() == Ticket.bus));
+        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 58 && e.getTicket() == Ticket.bus));
+        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 46 && e.getTicket() == Ticket.underground));
     }
 
     @Test
@@ -38,10 +38,10 @@ public class BoardTest {
         assertNotNull(edges);
         assertEquals(4, edges.size(), "Node 32 should have 4 edges");
 
-        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 19 && e.getTransport() == Transport.taxi));
-        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 33 && e.getTransport() == Transport.taxi));
-        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 44 && e.getTransport() == Transport.taxi));
-        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 45 && e.getTransport() == Transport.taxi));
+        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 19 && e.getTicket() == Ticket.taxi));
+        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 33 && e.getTicket() == Ticket.taxi));
+        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 44 && e.getTicket() == Ticket.taxi));
+        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 45 && e.getTicket() == Ticket.taxi));
     }
 
     @Test
@@ -50,10 +50,10 @@ public class BoardTest {
         assertNotNull(edges);
         assertEquals(4, edges.size(), "Node 146 should have 4 edges");
 
-        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 145 && e.getTransport() == Transport.taxi));
-        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 147 && e.getTransport() == Transport.taxi));
-        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 163 && e.getTransport() == Transport.taxi));
-        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 122 && e.getTransport() == Transport.taxi));
+        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 145 && e.getTicket() == Ticket.taxi));
+        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 147 && e.getTicket() == Ticket.taxi));
+        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 163 && e.getTicket() == Ticket.taxi));
+        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 122 && e.getTicket() == Ticket.taxi));
     }
 
     @Test
@@ -63,9 +63,9 @@ public class BoardTest {
         assertEquals(13, edges.size());
 
         // Test auf ein paar gezielte Verbindungen
-        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 142 && e.getTransport() == Transport.taxi));
-        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 135 && e.getTransport() == Transport.bus));
-        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 140 && e.getTransport() == Transport.underground));
+        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 142 && e.getTicket() == Ticket.taxi));
+        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 135 && e.getTicket() == Ticket.bus));
+        assertTrue(edges.stream().anyMatch(e -> e.getTo() == 140 && e.getTicket() == Ticket.underground));
     }
 
     @Test

@@ -2,6 +2,7 @@ package at.aau.serg.scotlandyard.gamelogic;
 
 import at.aau.serg.scotlandyard.gamelogic.board.Board;
 import at.aau.serg.scotlandyard.gamelogic.player.Player;
+import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -24,15 +25,16 @@ public class GameState {
 
     public List<Integer> getAllowedMoves(String name) {
         Player p = players.get(name);
-        if (p == null) return List.of();
-        return p.allowedNextMoves(board); //
+        return (p == null) ? List.of() : p.allowedNextMoves(board);
     }
 
-    public void movePlayer(String name, int to) {
+    public boolean movePlayer(String name, int to, Ticket ticket) {
         Player p = players.get(name);
-        if (p != null && p.isValidMove(to)) {
-            //todo implement
+        if (p != null && p.isValidMove(to, ticket, board)) {
+            p.move(to, ticket);
+            return true;
         }
+        return false;
     }
 
     public Board getBoard() {

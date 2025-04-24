@@ -2,36 +2,57 @@ package at.aau.serg.scotlandyard.gamelogic.player;
 
 import at.aau.serg.scotlandyard.gamelogic.board.Board;
 import at.aau.serg.scotlandyard.gamelogic.board.Edge;
-import at.aau.serg.scotlandyard.gamelogic.board.Transport;
+import at.aau.serg.scotlandyard.gamelogic.player.tickets.PlayerTickets;
+import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
 
 import java.util.*;
 
 public abstract class Player {
-    public Map<Transport, Integer> ticketsLeft;
-    public int pos;
+   protected final PlayerTickets tickets;
+   protected int pos;
 
-    public Player() {
-        Random rand = new Random();
-        pos = rand.nextInt(199);
-        ticketsLeft = new HashMap<>();
+    public Player(PlayerTickets tickets) {
+        this.tickets = tickets;
+        this.pos = new Random().nextInt(199)+1;
+
     }
 
-    public void move(Transport ticket, int to) {
-        //todo Implement
-    }
-    public boolean isValidMove(int to){
+    public boolean isValidMove(int to, Ticket ticket, Board board) {
+        if (!tickets.hasTicket(ticket)) {
+            return false;
+        }
+
         return false; //Todo Implement
+    }
+    public void move(int to, Ticket ticket) {
+        if (isValidMove(to, ticket, new Board())) {
+            tickets.useTicket(ticket);
+            pos = to;
+        } else {
+            throw new IllegalArgumentException("Invalid move!");
+        }
+    }
+
+    public PlayerTickets getTickets() {
+        return tickets;
+    }
+
+    public int getPosition() {
+        return pos;
     }
 
     public List<Integer> allowedNextMoves(Board board) {
-        List<Integer> allowed = new ArrayList<>();
+        List<Integer> allowedMoves = new ArrayList<>();
         for (Edge edge : board.getConnectionsFrom(this.pos)) {
-            Transport transport = edge.getTransport();
-            if (ticketsLeft.getOrDefault(transport, 0) > 0) {
-                allowed.add(edge.getTo());
+            Ticket requiredTicket = transportToTicket(edge.getTicket());
+            if (tickets.hasTicket(requiredTicket)) {
+                allowedMoves.add(edge.getTo());
             }
         }
-        return allowed;
+        return allowedMoves;
     }
 
+    private Ticket transportToTicket(Ticket ticket) {
+       return ticket;
+    }
 }

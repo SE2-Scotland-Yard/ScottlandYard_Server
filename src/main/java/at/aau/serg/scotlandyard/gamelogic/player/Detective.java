@@ -1,14 +1,23 @@
 package at.aau.serg.scotlandyard.gamelogic.player;
 
-import at.aau.serg.scotlandyard.gamelogic.board.Transport;
+import at.aau.serg.scotlandyard.gamelogic.player.tickets.PlayerTickets;
+import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Detective extends Player {
 
     public Detective() {
-        super();
-        ticketsLeft.put(Transport.taxi,11);
-        ticketsLeft.put(Transport.bus,8);
-        ticketsLeft.put(Transport.underground,4);
-        ticketsLeft.put(Transport.BOAT,0);
+        super(initializeTickets());
+
+    }
+
+    private static PlayerTickets initializeTickets() {
+        Map<Ticket, Integer> initialTickets = new HashMap<>();
+        initialTickets.put(Ticket.taxi, 10);
+        initialTickets.put(Ticket.bus, 8);
+        initialTickets.put(Ticket.underground, 4);
+        return new PlayerTickets(initialTickets);
     }
 }

@@ -3,6 +3,10 @@ package at.aau.serg.scotlandyard.controller;
 import at.aau.serg.scotlandyard.dto.GameOverviewDTO;
 import at.aau.serg.scotlandyard.gamelogic.GameManager;
 import at.aau.serg.scotlandyard.gamelogic.GameState;
+import at.aau.serg.scotlandyard.gamelogic.player.Detective;
+import at.aau.serg.scotlandyard.gamelogic.player.MrX;
+import at.aau.serg.scotlandyard.gamelogic.player.Player;
+import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -30,10 +34,11 @@ public class GameController {
     @PostMapping("/move")
     public String move(@RequestParam String gameId,
                        @RequestParam String name,
-                       @RequestParam int to) {
+                       @RequestParam int to,
+                       @RequestParam Ticket ticket) {
         GameState game = gameManager.getGame(gameId);
         if (game == null) return "Spiel nicht gefunden!";
-        game.movePlayer(name, to);
+        game.movePlayer(name, to, ticket);
         return "Spieler " + name + " bewegt sich zu " + to + " in Spiel " + gameId;
     }
 
