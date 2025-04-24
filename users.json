@@ -2,4 +2,12 @@
   "id" : 1,
   "username" : "ScotlandYardPro",
   "password" : "$2a$10$4KDYSF6Mt3zUrqc6U/n0.OqCSTKASq7sF6lLYCKfQ.QmP88oYHhsG"
+}, {
+  "id" : 2,
+  "username" : "test",
+  "password" : "$2a$10$U0nEK4CG6brLVZa5bE8ePu5Hwq4P9OI/zEgUi3CNpXbv8PO5TvEvq"
+}, {
+  "id" : 3,
+  "username" : "test2",
+  "password" : "$2a$10$Q.Uyevb2rSnNpwZpgP1yhuTIwspfXShoAtLw2Ilccy/zLVSXhNeb6"
 } ]
