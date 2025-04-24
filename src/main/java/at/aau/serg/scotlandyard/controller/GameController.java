@@ -1,5 +1,6 @@
 package at.aau.serg.scotlandyard.controller;
 
+import at.aau.serg.scotlandyard.dto.GameOverviewDTO;
 import at.aau.serg.scotlandyard.gamelogic.GameManager;
 import at.aau.serg.scotlandyard.gamelogic.GameState;
 import at.aau.serg.scotlandyard.gamelogic.player.Detective;
@@ -8,7 +9,9 @@ import at.aau.serg.scotlandyard.gamelogic.player.Player;
 import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/game")
@@ -18,23 +21,6 @@ public class GameController {
 
     public GameController(GameManager gameManager) {
         this.gameManager = gameManager;
-    }
-
-    @PostMapping("/add")
-    public String addPlayer(@RequestParam String gameId,
-                            @RequestParam String name,
-                            @RequestParam String type) {
-
-        GameState game = gameManager.getOrCreateGame(gameId);
-        Player player = switch (type.toLowerCase()) {
-            case "mrx" -> new MrX();
-            case "detective" -> new Detective();
-            default -> null;
-        };
-        if (player == null) return "Ungültiger Typ";
-
-        game.addPlayer(name, player);
-        return "Spieler " + name + " zu Spiel " + gameId + " hinzugefügt!";
     }
 
     @GetMapping("/allowedMoves")
@@ -55,5 +41,19 @@ public class GameController {
         game.movePlayer(name, to, ticket);
         return "Spieler " + name + " bewegt sich zu " + to + " in Spiel " + gameId;
     }
-}
 
+    @GetMapping("/all")
+    public List<GameOverviewDTO> getAllGames() {
+        return gameManager.getAllGameIds().stream()
+                .map(id -> {
+                    GameState game = gameManager.getGame(id);
+                    Map<String, String> players = new HashMap<>();
+                    for (var entry : game.getAllPlayers().entrySet()) {
+                        players.put(entry.getKey(), entry.getValue().getClass().getSimpleName());
+                    }
+                    return new GameOverviewDTO(id, players);
+                })
+                .toList();
+    }
+
+}

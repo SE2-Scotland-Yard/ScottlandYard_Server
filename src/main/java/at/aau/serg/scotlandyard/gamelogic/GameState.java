@@ -40,4 +40,9 @@ public class GameState {
     public Board getBoard() {
         return board;
     }
+
+    public Map<String, Player> getAllPlayers() {
+        return players;
+    }
+
 }
