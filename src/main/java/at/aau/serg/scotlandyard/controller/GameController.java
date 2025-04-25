@@ -39,7 +39,23 @@ public class GameController {
         GameState game = gameManager.getGame(gameId);
         if (game == null) return "Spiel nicht gefunden!";
         game.movePlayer(name, to, ticket);
+
+        if(game.getWinner() != GameState.Winner.NONE){
+            return getWinner(gameId);
+        }
+
         return "Spieler " + name + " bewegt sich zu " + to + " in Spiel " + gameId;
+    }
+
+    @GetMapping("/winner")
+    public String getWinner(@RequestParam String gameId) {
+        GameState game = gameManager.getGame(gameId);
+        if (game == null) return "Spiel nicht gefunden!";
+        switch(game.getWinner()){
+            case MR_X : return "Mr.X hat gewonnen!";
+            case DETECTIVE: return "Detektive haben gewonnen!";
+            default: return "Spiel läuft noch.";
+        }
     }
 
     @GetMapping("/all")

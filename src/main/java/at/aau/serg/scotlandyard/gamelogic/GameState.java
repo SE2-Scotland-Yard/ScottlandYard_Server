@@ -14,6 +14,7 @@ public class GameState {
 
     private final Board board;
     private final Map<String, Player> players = new HashMap<>();
+    private final RoundManager roundManager;
 
     public GameState() {
         this.board = new Board();
@@ -44,5 +45,19 @@ public class GameState {
     public Map<String, Player> getAllPlayers() {
         return players;
     }
+
+    //Winning Condition
+    public enum Winner{ MR_X, DETECTIVE, NONE};
+
+    public Winner getWinner(){
+        if(!roundManager.isGameOver()){
+            return Winner.NONE; //Game still running
+        }
+        if(roundManager.isMrXCaptured()){
+            return Winner.DETECTIVE;
+        }
+        return Winner.MR_X;
+    }
+
 
 }
