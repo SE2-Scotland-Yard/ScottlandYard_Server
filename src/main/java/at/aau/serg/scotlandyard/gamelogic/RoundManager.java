@@ -8,11 +8,11 @@ public class RoundManager {
     private final MrX mrX;
     private final List<Player>turnOrder;
 
-    private int currentPlayerTurn = 0;
+    private int currentPlayerTurn = 0; //index that indicates which player is next
     private int currentRound = 1;
     private final int maxRounds = 24;
 
-    private final List<Integer> revealRounds = Arrays.asList(3,8,13,18,24);
+    private final List<Integer> revealRounds = Arrays.asList(3,8,13,18,24); //for Mr.X
 
     public RoundManager(List<Detective> detectives, MrX mrX) {
         this.detectives = detectives;
@@ -22,7 +22,35 @@ public class RoundManager {
         this.turnOrder.addAll(detectives);
     }
 
+    public Player getCurrentPlayer() {
+        return turnOrder.get(currentPlayerTurn);
+    }
 
+    public void nextTurn(){
+        currentPlayerTurn++;
+
+        if(currentPlayerTurn >= turnOrder.size()){
+            currentPlayerTurn = 0;
+            currentRound++;
+        }
+    }
+
+
+
+
+
+
+    public int getCurrentRound() {
+        return currentRound;
+    }
+
+    public List<Detective> getDetectives() {
+        return detectives;
+    }
+
+    public MrX getMrX(){
+        return mrX;
+    }
 
 
 }
