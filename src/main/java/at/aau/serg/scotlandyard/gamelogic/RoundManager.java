@@ -35,8 +35,25 @@ public class RoundManager {
         }
     }
 
+    public boolean isMrXVisible() {
+        if (revealRounds.contains(currentRound)) {
+            return true;
+        }
+        return false;
+    }
 
+    public boolean isMrXCaptured(){
+        for(Detective detective : detectives){
+            if(detective.getPosition() == mrX.getPosition()){
+                return true;
+            }
+        }
+        return false;
+    }
 
+    public boolean isGameOver(){
+        return currentRound > maxRounds || isMrXCaptured();
+    }
 
 
 
