@@ -1,6 +1,8 @@
 package at.aau.serg.scotlandyard.gamelogic;
 
 import at.aau.serg.scotlandyard.gamelogic.board.Board;
+import at.aau.serg.scotlandyard.gamelogic.player.Detective;
+import at.aau.serg.scotlandyard.gamelogic.player.MrX;
 import at.aau.serg.scotlandyard.gamelogic.player.Player;
 import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
 import org.springframework.stereotype.Component;
@@ -14,9 +16,14 @@ public class GameState {
 
     private final Board board;
     private final Map<String, Player> players = new HashMap<>();
+    private RoundManager roundManager;
 
     public GameState() {
         this.board = new Board();
+    }
+
+    public void initRoundManager(List<Detective>detectives, MrX mrX){ //nicht ideal
+        this.roundManager = new RoundManager(detectives, mrX);
     }
 
     public void addPlayer(String name, Player player) {
@@ -44,5 +51,19 @@ public class GameState {
     public Map<String, Player> getAllPlayers() {
         return players;
     }
+
+    //Winning Condition
+    public enum Winner{ MR_X, DETECTIVE, NONE};
+
+    public Winner getWinner(){
+        if(!roundManager.isGameOver()){
+            return Winner.NONE; //Game still running
+        }
+        if(roundManager.isMrXCaptured()){
+            return Winner.DETECTIVE;
+        }
+        return Winner.MR_X;
+    }
+
 
 }
