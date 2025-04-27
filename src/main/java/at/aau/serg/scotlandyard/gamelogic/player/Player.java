@@ -14,18 +14,23 @@ public abstract class Player {
     public Player(PlayerTickets tickets) {
         this.tickets = tickets;
         this.pos = new Random().nextInt(199)+1;
-
     }
 
     public boolean isValidMove(int to, Ticket ticket, Board board) {
         if (!tickets.hasTicket(ticket)) {
             return false;
         }
-
-        return false; //Todo Implement
+        List<Edge> connections = board.getConnectionsFrom(this.pos);
+        for (Edge edge : connections) {
+            if (edge.getTo() == to && edge.getTicket() == ticket) {
+                return true;
+            }
+        }
+        return false;
     }
-    public void move(int to, Ticket ticket) {
-        if (isValidMove(to, ticket, new Board())) {
+
+    public void move(int to, Ticket ticket, Board board) {
+        if (isValidMove(to, ticket, board)) {
             tickets.useTicket(ticket);
             pos = to;
         } else {
