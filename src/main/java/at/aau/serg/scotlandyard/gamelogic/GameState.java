@@ -159,3 +159,21 @@ public class GameState {
     }
 
 }
+
+class MrXMove {
+    private final int position;
+    private final Ticket ticket;
+
+    public MrXMove(int position, Ticket ticket) {
+        this.position = position;
+        this.ticket = ticket;
+    }
+
+    public int getPosition() {
+        return position;
+    }
+
+    public Ticket getTicket() {
+        return ticket;
+    }
+}
