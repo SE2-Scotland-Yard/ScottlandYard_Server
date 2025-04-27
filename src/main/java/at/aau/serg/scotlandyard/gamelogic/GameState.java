@@ -96,5 +96,66 @@ public class GameState {
         return Winner.MR_X;
     }
 
+    public boolean validateMove(String playerName, int target, Ticket ticket) {
+        Player player = players.get(playerName);
+
+        return getAllowedMoves(playerName).contains(target)
+                && player.getTickets().hasTicket(ticket)
+                && (player instanceof MrX || !isPositionOccupied(target));
+    }
+
+    public boolean isPositionOccupied(int position) {
+        return players.values().stream()
+                .anyMatch(p -> p.getPosition() == position);
+    }
+
+    public boolean moveMrXDouble(String name, int firstTo, Ticket firstTicket, int secondTo, Ticket secondTicket) {
+        Player p = players.get(name);
+        if (p instanceof MrX mrX) {
+            try {
+                mrX.moveDouble(firstTo, firstTicket, secondTo, secondTicket, board);
+                mrXHistory.put(currentRound, new MrXMove(firstTo, firstTicket));
+                mrXHistory.put(currentRound + 1, new MrXMove(secondTo, secondTicket));
+                currentRound+=2;
+                return true;
+            } catch (IllegalArgumentException e) {
+                System.out.println("Ungültiger Doppelzug von MrX: " + e.getMessage());
+            }
+        }
+        return false;
+    }
+
+    public String getVisibleMrXPosition() {
+        MrX mrX = null;
+        for (Player p : players.values()) {
+            if (p instanceof MrX) {
+                mrX = (MrX) p;
+                break;
+            }
+        }
+        if (mrX == null) return "MrX nicht im Spiel";
+
+        if (revealRounds.contains(currentRound - 1)) {
+            return String.valueOf(mrX.getPosition()); // letzte sichtbare Position
+        } else {
+            return "?";
+        }
+    }
+
+    public List<String> getMrXMoveHistory() {
+        List<String> history = new ArrayList<>();
+
+        for (int i = 1; i <= currentRound - 1; i++) {
+            MrXMove move = mrXHistory.get(i);
+            if (move == null) continue;
+
+            String pos = revealRounds.contains(i) ? String.valueOf(move.getPosition()) : "?";
+            String ticket = move.getTicket().name();
+
+            history.add("Runde " + i + ": " + pos + " (" + ticket + ")");
+        }
+
+        return history;
+    }
 
 }
