@@ -1,5 +1,6 @@
 package at.aau.serg.scotlandyard.controller;
 
+import at.aau.serg.scotlandyard.dto.JoinResponse;
 import at.aau.serg.scotlandyard.dto.LobbyUpdate;
 import at.aau.serg.scotlandyard.gamelogic.Lobby;
 import at.aau.serg.scotlandyard.gamelogic.LobbyManager;
@@ -48,32 +49,29 @@ public class LobbyController {
 
 
     @PostMapping("/{gameId}/join")
-    public ResponseEntity<String> joinLobby(@PathVariable String gameId,
-                                            @RequestParam String name) {
+    public ResponseEntity<JoinResponse> joinLobby(@PathVariable String gameId,
+                                                  @RequestParam String name) {
         Lobby lobby = lobbyManager.getLobby(gameId);
         if (lobby == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Lobby mit der ID " + gameId + " wurde nicht gefunden.");
+                    .body(new JoinResponse("Lobby mit der ID " + gameId + " wurde nicht gefunden."));
         }
 
         boolean success = lobby.addPlayer(name);
         if (!success) {
             return ResponseEntity.badRequest()
-                    .body("Lobby ist voll oder bereits gestartet.");
+                    .body(new JoinResponse("Lobby ist voll oder bereits gestartet."));
         }
 
         System.out.println("WS-Broadcast: /topic/lobby/" + gameId);
         System.out.println("Spieler in der Lobby: " + lobby.getPlayers());
 
-
         LobbyState state = LobbyMapper.toLobbyState(lobby);
         messaging.convertAndSend("/topic/lobby/" + gameId, state);
 
-        return ResponseEntity.ok()
-                .contentType(MediaType.TEXT_PLAIN)
-                .body(name + " ist der Lobby " + gameId + " beigetreten.");
-
+        return ResponseEntity.ok(new JoinResponse(name + " ist der Lobby " + gameId + " beigetreten."));
     }
+
 
     @PostMapping("/{gameId}/leave")
     public ResponseEntity<String> leaveLobby(
