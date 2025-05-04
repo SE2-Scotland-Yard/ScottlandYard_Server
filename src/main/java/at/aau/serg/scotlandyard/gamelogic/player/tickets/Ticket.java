@@ -2,9 +2,9 @@ package at.aau.serg.scotlandyard.gamelogic.player.tickets;
 
 public enum Ticket {
 
-    taxi,
-    bus,
-    underground,
+    TAXI,
+    BUS,
+    UNDERGROUND,
     BLACK,
     DOUBLE;
 

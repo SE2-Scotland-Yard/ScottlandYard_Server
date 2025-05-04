@@ -8,6 +8,10 @@ import java.util.Map;
 
 public class LobbyMapper {
 
+    private LobbyMapper() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     public static LobbyState toLobbyState(Lobby lobby) {
 
         Map<String, String> roleMap = new HashMap<>();

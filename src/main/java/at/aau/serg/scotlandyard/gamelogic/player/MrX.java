@@ -16,9 +16,9 @@ public class MrX extends Player {
     private static PlayerTickets initializeTickets() {
         Map<Ticket, Integer> initialTickets = new HashMap<>();
 
-        initialTickets.put(Ticket.taxi, 4);
-        initialTickets.put(Ticket.bus, 3);
-        initialTickets.put(Ticket.underground, 3);
+        initialTickets.put(Ticket.TAXI, 4);
+        initialTickets.put(Ticket.BUS, 3);
+        initialTickets.put(Ticket.UNDERGROUND, 3);
         initialTickets.put(Ticket.BLACK, 5);
         initialTickets.put(Ticket.DOUBLE, 2);
 

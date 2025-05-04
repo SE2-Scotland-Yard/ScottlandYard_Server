@@ -18,22 +18,25 @@ public class WebSockethandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         sessions.add(session);
-        broadcastMessage("Player joined: " + validateSessionId(session.getId()));
-        logger.info("Player connected: {}", validateSessionId(session.getId()));
+        String validatedId = validateSessionId(session.getId());
+        broadcastMessage("Player joined: " + validatedId);
+        logger.info("Player connected: {}", validatedId);
         checkAndStartGame();
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
-        logger.info("Received message from {}", validateSessionId(session.getId()));
-        broadcastMessage("Player " + validateSessionId(session.getId()) + ": message received");
+        String validatedId = validateSessionId(session.getId());
+        logger.info("Received message from {}", validatedId);
+        broadcastMessage("Player " + validatedId + ": message received");
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
         sessions.remove(session);
-        broadcastMessage("Player left: " + validateSessionId(session.getId()));
-        logger.info("Player disconnected: {}", validateSessionId(session.getId()));
+        String validatedId = validateSessionId(session.getId());
+        broadcastMessage("Player left: " + validatedId);
+        logger.info("Player disconnected: {}", validatedId);
     }
 
     private void broadcastMessage(String message) {

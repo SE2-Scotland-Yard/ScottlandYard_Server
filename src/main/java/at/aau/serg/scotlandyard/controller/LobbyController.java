@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.util.List;
@@ -21,6 +23,7 @@ public class LobbyController {
 
     private final LobbyManager lobbyManager;
     private final SimpMessagingTemplate messaging;
+    private static final Logger logger = LoggerFactory.getLogger(LobbyController.class);
 
 
 
@@ -63,8 +66,8 @@ public class LobbyController {
                     .body(new JoinResponse("Lobby ist voll oder bereits gestartet."));
         }
 
-        System.out.println("WS-Broadcast: /topic/lobby/" + gameId);
-        System.out.println("Spieler in der Lobby: " + lobby.getPlayers());
+        logger.info("WS-Broadcast: /topic/lobby/" + gameId);
+        logger.info("Spieler in der Lobby: " + lobby.getPlayers());
 
         LobbyState state = LobbyMapper.toLobbyState(lobby);
         messaging.convertAndSend("/topic/lobby/" + gameId, state);

@@ -10,15 +10,15 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PlayerTicketsTest {
+class PlayerTicketsTest {
     private PlayerTickets playerTickets;
     private final Map<Ticket, Integer> initialTickets = new HashMap<>();
 
     @BeforeEach
-    public void setUp() {
-        initialTickets.put(Ticket.taxi, 4);
-        initialTickets.put(Ticket.bus, 3);
-        initialTickets.put(Ticket.underground, 2);
+    void setUp() {
+        initialTickets.put(Ticket.TAXI, 4);
+        initialTickets.put(Ticket.BUS, 3);
+        initialTickets.put(Ticket.UNDERGROUND, 2);
         initialTickets.put(Ticket.BLACK, 1);
         initialTickets.put(Ticket.DOUBLE,0);
         playerTickets = new PlayerTickets(initialTickets);
@@ -26,18 +26,18 @@ public class PlayerTicketsTest {
 
     @Test
     void construcotTest(){
-        assertEquals(4, playerTickets.getTicketCount(Ticket.taxi));
-        assertEquals(3, playerTickets.getTicketCount(Ticket.bus));
-        assertEquals(2, playerTickets.getTicketCount(Ticket.underground));
+        assertEquals(4, playerTickets.getTicketCount(Ticket.TAXI));
+        assertEquals(3, playerTickets.getTicketCount(Ticket.BUS));
+        assertEquals(2, playerTickets.getTicketCount(Ticket.UNDERGROUND));
         assertEquals(1, playerTickets.getTicketCount(Ticket.BLACK));
         assertEquals(0, playerTickets.getTicketCount(Ticket.DOUBLE));
     }
 
     @Test
     void hasTicketTestAvailable(){
-        assertTrue(playerTickets.hasTicket(Ticket.taxi));
-        assertTrue(playerTickets.hasTicket(Ticket.bus));
-        assertTrue(playerTickets.hasTicket(Ticket.underground));
+        assertTrue(playerTickets.hasTicket(Ticket.TAXI));
+        assertTrue(playerTickets.hasTicket(Ticket.BUS));
+        assertTrue(playerTickets.hasTicket(Ticket.UNDERGROUND));
         assertTrue(playerTickets.hasTicket(Ticket.BLACK));
 
     }
@@ -49,8 +49,8 @@ public class PlayerTicketsTest {
 
     @Test
     void useTicketTest(){
-        playerTickets.useTicket(Ticket.taxi);
-        assertEquals(3, playerTickets.getTicketCount(Ticket.taxi));
+        playerTickets.useTicket(Ticket.TAXI);
+        assertEquals(3, playerTickets.getTicketCount(Ticket.TAXI));
     }
 
     @Test
@@ -60,8 +60,8 @@ public class PlayerTicketsTest {
 
     @Test
     void addTicket_shouldIncreaseTicketCount() {
-        playerTickets.addTicket(Ticket.taxi);
-        assertEquals(5, playerTickets.getTicketCount(Ticket.taxi));
+        playerTickets.addTicket(Ticket.TAXI);
+        assertEquals(5, playerTickets.getTicketCount(Ticket.TAXI));
 
         playerTickets.addTicket(Ticket.DOUBLE);
         assertEquals(1, playerTickets.getTicketCount(Ticket.DOUBLE));
@@ -69,9 +69,9 @@ public class PlayerTicketsTest {
 
     @Test
     void getTicketCount() {
-        assertEquals(4, playerTickets.getTicketCount(Ticket.taxi));
-        assertEquals(3, playerTickets.getTicketCount(Ticket.bus));
-        assertEquals(2, playerTickets.getTicketCount(Ticket.underground));
+        assertEquals(4, playerTickets.getTicketCount(Ticket.TAXI));
+        assertEquals(3, playerTickets.getTicketCount(Ticket.BUS));
+        assertEquals(2, playerTickets.getTicketCount(Ticket.UNDERGROUND));
         assertEquals(1, playerTickets.getTicketCount(Ticket.BLACK));
         assertEquals(0, playerTickets.getTicketCount(Ticket.DOUBLE));
     }

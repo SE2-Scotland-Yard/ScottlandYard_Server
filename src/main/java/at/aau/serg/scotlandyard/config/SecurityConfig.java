@@ -22,7 +22,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll() // Login/Register freigeben
                         .anyRequest().permitAll()
                 );
-                //.httpBasic(Customizer.withDefaults());
+
 
         return http.build();
     }

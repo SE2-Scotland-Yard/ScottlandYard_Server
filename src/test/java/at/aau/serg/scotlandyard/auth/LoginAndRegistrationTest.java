@@ -9,7 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class LoginAndRegistrationTest {
+class LoginAndRegistrationTest {
 
     private AuthService authService;
     private UserRepositoryJson userRepository;
@@ -18,7 +18,7 @@ public class LoginAndRegistrationTest {
     private final String password = "testpass123";
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         userRepository = new UserRepositoryJson();
         authService = new AuthService(userRepository, new BCryptPasswordEncoder());
 
@@ -30,50 +30,50 @@ public class LoginAndRegistrationTest {
     }
 
     @Test
-    public void testRegistrationDuplicate() {
+    void testRegistrationDuplicate() {
         String result = authService.register(username, password);
         assertEquals("Username already exists", result);
     }
     @Test
-    public void testRegistration() {
+    void testRegistration() {
         String result = authService.register("TestRegistration", password);
         assertEquals("Registration successful", result);
     }
 
     @Test
-    public void testLoginSuccess() {
+    void testLoginSuccess() {
         String result = authService.login(username, password);
         assertEquals("Login successful", result);
     }
 
     @Test
-    public void testLoginWrongPassword() {
+    void testLoginWrongPassword() {
         String wrongPassword = "wrongPassword123";
         String result = authService.login(username, wrongPassword);
         assertEquals("Incorrect password", result);
     }
 
     @Test
-    public void testLoginNonexistentUser() {
+    void testLoginNonexistentUser() {
         String result = authService.login("nonexistent_user_abc", password);
         assertEquals("User not found", result);
 
     }
 
     @Test
-    public void testRegistrationWithEmptyUsername() {
+    void testRegistrationWithEmptyUsername() {
         String result = authService.register("   ", password);
         assertEquals("Username and password must not be empty", result);
     }
 
     @Test
-    public void testRegistrationWithEmptyPassword() {
+    void testRegistrationWithEmptyPassword() {
         String result = authService.register(username, "");
         assertEquals("Username and password must not be empty", result);
     }
 
     @AfterEach
-    public void tearDown() {
+    void tearDown() {
         userRepository.deleteByUsername(username);
         userRepository.deleteByUsername("TestRegistration");
     }

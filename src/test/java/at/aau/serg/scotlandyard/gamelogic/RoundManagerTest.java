@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 import java.util.ArrayList;
 
 
-public class RoundManagerTest {
+class RoundManagerTest {
 
     @Mock
     private Detective detective1;
@@ -29,7 +29,7 @@ public class RoundManagerTest {
     private RoundManager roundManager;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
 
         //Setup Roundmanager
@@ -45,7 +45,7 @@ public class RoundManagerTest {
     }
 
     @Test
-    public void testGetCurrentPlayer(){
+    void testGetCurrentPlayer(){
         Player player = roundManager.getCurrentPlayer();
         assertEquals(mrX, player);
         roundManager.nextTurn();
@@ -53,7 +53,7 @@ public class RoundManagerTest {
         assertEquals(detective1, player);
     }
     @Test
-    public void testNextTurn(){
+    void testNextTurn(){
         roundManager.nextTurn();
         assertEquals(detective1, roundManager.getCurrentPlayer());
         roundManager.nextTurn();
@@ -63,7 +63,7 @@ public class RoundManagerTest {
     }
 
     @Test
-    public void testIsMrXVisible(){
+    void testIsMrXVisible(){
         roundManager = new RoundManager(new ArrayList<>(), mrX);
         roundManager.nextTurn();
         roundManager.nextTurn();
@@ -77,21 +77,21 @@ public class RoundManagerTest {
     }
 
     @Test
-    public void testIsMrXCaptured(){
+    void testIsMrXCaptured(){
         assertFalse(roundManager.isMrXCaptured());
         when(detective1.getPosition()).thenReturn(5);
         assertTrue(roundManager.isMrXCaptured());
     }
 
     @Test
-    public void testIsGameOverMrXCaptured(){
+    void testIsGameOverMrXCaptured(){
         assertFalse(roundManager.isGameOver());
         when(detective1.getPosition()).thenReturn(5);
         assertTrue(roundManager.isGameOver());
     }
 
     @Test
-    public void testIsGameOverMaxRounds(){
+    void testIsGameOverMaxRounds(){
         assertFalse(roundManager.isGameOver());
 
         int totalTurns = 3 * 25; // MaxRounds = 24 (smaller than 25), 3 total Players
