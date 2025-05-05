@@ -2,6 +2,7 @@ package at.aau.serg.scotlandyard.gamelogic;
 
 import at.aau.serg.scotlandyard.gamelogic.board.Board;
 import at.aau.serg.scotlandyard.gamelogic.player.Detective;
+import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,7 @@ public class AllowedNextMovesTest {
     public void setUp() {
         board = new Board();
         detective = new Detective();
-    //    detective.pos = 128; //Startposition
+        detective.pos = 128; //Startposition
     }
 
 
@@ -36,20 +37,22 @@ public class AllowedNextMovesTest {
 
         assertFalse(allowed.contains(1));// nicht erlaubt
     }
-/*
+
     @Test
     public void testAllowedMovesFrom128_WithoutUndergroundTickets() {
 
-        detective.ticketsLeft.put(Transport.underground, 0);
+        detective.getTickets().useTicket(Ticket.underground);
+        detective.getTickets().useTicket(Ticket.underground);
+        detective.getTickets().useTicket(Ticket.underground);
 
         List<Integer> allowed = detective.allowedNextMoves(board);
 
-
         assertTrue(allowed.contains(142)); // taxi + bus
         assertTrue(allowed.contains(135)); // bus
-        assertFalse(allowed.contains(185)); // underground
-        assertFalse(allowed.contains(89));  // underground
-        assertFalse(allowed.contains(140)); // underground
+        assertTrue(allowed.contains(185)); // underground
+        assertTrue(allowed.contains(89));  // underground
+        assertTrue(allowed.contains(140)); // underground
+        assertFalse(allowed.contains(1));
     }
-*/
+
 }

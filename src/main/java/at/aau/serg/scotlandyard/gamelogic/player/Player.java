@@ -9,7 +9,7 @@ import java.util.*;
 
 public abstract class Player {
    protected final PlayerTickets tickets;
-   protected int pos;
+   public int pos;
 
     public Player(PlayerTickets tickets) {
         this.tickets = tickets;

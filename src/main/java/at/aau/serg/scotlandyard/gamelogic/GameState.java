@@ -38,6 +38,9 @@ public class GameState {
 
     public List<Integer> getAllowedMoves(String name) {
         Player p = players.get(name);
+        if (p == null || board == null) {
+            return List.of();
+        }
         //return (p == null) ? List.of() : p.allowedNextMoves(board);
         List<Edge> connections = board.getConnectionsFrom(p.getPosition());
 
