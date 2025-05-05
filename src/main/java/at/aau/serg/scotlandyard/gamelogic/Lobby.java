@@ -11,8 +11,8 @@ public class Lobby {
     private final Set<String> players = new HashSet<>();
     private final Map<String, Boolean> readyStatus = new HashMap<>();
     private final Map<String, Role> selectedRoles = new HashMap<>();
-    private static final int minPlayers = 1;
-    private static final int maxPlayers = 6;
+    private static final int MINPLAYERS = 1;
+    private static final int MAXPLAYERS = 6;
     private final boolean isPublic;
     private boolean started = false;
 
@@ -22,7 +22,7 @@ public class Lobby {
     }
 
     public boolean addPlayer(String name) {
-        if (started || players.size() >= maxPlayers) return false;
+        if (started || players.size() >= MAXPLAYERS) return false;
         boolean added = players.add(name);
         if (added) {
             readyStatus.put(name, false); // standardmäßig nicht bereit
@@ -89,7 +89,7 @@ public class Lobby {
 
     public boolean hasEnoughPlayers() {
 
-        return players.size()>=minPlayers;
+        return players.size()>= MINPLAYERS;
     }
 
     public Map<String, Role> getAllSelectedRoles() {
