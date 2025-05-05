@@ -9,9 +9,9 @@ import java.util.*;
 
 public abstract class Player {
    protected final PlayerTickets tickets;
-   public int pos;
+   private int pos;
 
-    public Player(PlayerTickets tickets) {
+    protected Player(PlayerTickets tickets) {
         this.tickets = tickets;
         this.pos = new Random().nextInt(199)+1;
     }
@@ -59,5 +59,13 @@ public abstract class Player {
 
     private Ticket transportToTicket(Ticket ticket) {
        return ticket;
+    }
+
+    public int getPos() {
+        return pos;
+    }
+
+    public void setPos(int pos) {
+        this.pos = pos;
     }
 }

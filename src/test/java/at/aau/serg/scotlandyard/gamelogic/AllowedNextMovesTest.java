@@ -10,21 +10,21 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AllowedNextMovesTest {
+class AllowedNextMovesTest {
 
     private Board board;
     private Detective detective;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         board = new Board();
         detective = new Detective();
-        detective.pos = 128; //Startposition
+        detective.setPos(128); //Startposition
     }
 
 
     @Test
-    public void testAllowedMovesFrom128_WithUndergroundTickets() {
+    void testAllowedMovesFrom128_WithUndergroundTickets() {
         List<Integer> allowed = detective.allowedNextMoves(board);
 
 
@@ -39,11 +39,11 @@ public class AllowedNextMovesTest {
     }
 
     @Test
-    public void testAllowedMovesFrom128_WithoutUndergroundTickets() {
+    void testAllowedMovesFrom128_WithoutUndergroundTickets() {
 
-        detective.getTickets().useTicket(Ticket.underground);
-        detective.getTickets().useTicket(Ticket.underground);
-        detective.getTickets().useTicket(Ticket.underground);
+        detective.getTickets().useTicket(Ticket.UNDERGROUND);
+        detective.getTickets().useTicket(Ticket.UNDERGROUND);
+        detective.getTickets().useTicket(Ticket.UNDERGROUND);
 
         List<Integer> allowed = detective.allowedNextMoves(board);
 

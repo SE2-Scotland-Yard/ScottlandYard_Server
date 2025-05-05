@@ -11,8 +11,8 @@ public class Lobby {
     private final Set<String> players = new HashSet<>();
     private final Map<String, Boolean> readyStatus = new HashMap<>();
     private final Map<String, Role> selectedRoles = new HashMap<>();
-    private final int minPlayers = 1;
-    private final int maxPlayers = 6;
+    private static final int minPlayers = 1;
+    private static final int maxPlayers = 6;
     private final boolean isPublic;
     private boolean started = false;
 
@@ -89,7 +89,7 @@ public class Lobby {
 
     public boolean hasEnoughPlayers() {
 
-        if(players.size()>=minPlayers) {return true;}else{return false;}
+        return players.size()>=minPlayers;
     }
 
     public Map<String, Role> getAllSelectedRoles() {

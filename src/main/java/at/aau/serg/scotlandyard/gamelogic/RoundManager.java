@@ -13,7 +13,7 @@ public class RoundManager {
 
     private int currentPlayerTurn = 0; //index that indicates which player is next
     private int currentRound = 1;
-    private final int maxRounds = 24;
+    private static final int maxRounds = 24;
 
     private final List<Integer> revealRounds = Arrays.asList(3,8,13,18,24); //for Mr.X
 
@@ -39,10 +39,7 @@ public class RoundManager {
     }
 
     public boolean isMrXVisible() {
-        if (revealRounds.contains(currentRound)) {
-            return true;
-        }
-        return false;
+        return revealRounds.contains(currentRound);
     }
 
     public boolean isMrXCaptured(){

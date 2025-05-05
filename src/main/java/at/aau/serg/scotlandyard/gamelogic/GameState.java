@@ -1,5 +1,6 @@
 package at.aau.serg.scotlandyard.gamelogic;
 
+import at.aau.serg.scotlandyard.controller.LobbyController;
 import at.aau.serg.scotlandyard.gamelogic.board.Board;
 import at.aau.serg.scotlandyard.gamelogic.board.Edge;
 import at.aau.serg.scotlandyard.gamelogic.player.Detective;
@@ -7,11 +8,12 @@ import at.aau.serg.scotlandyard.gamelogic.player.MrX;
 import at.aau.serg.scotlandyard.gamelogic.player.Player;
 import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
 import org.springframework.stereotype.Component;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import java.util.ArrayList;
 
 @Component
@@ -23,6 +25,7 @@ public class GameState {
     private int currentRound = 1;
     private final List<Integer> revealRounds = List.of(3, 8, 13, 18, 24); // Sichtbarkeitsrunden
     private final Map<Integer, MrXMove> mrXHistory = new HashMap<>();
+    private static final Logger logger = LoggerFactory.getLogger(GameState.class);
 
     public GameState() {
         this.board = new Board();
@@ -41,25 +44,23 @@ public class GameState {
         if (p == null || board == null) {
             return List.of();
         }
-        //return (p == null) ? List.of() : p.allowedNextMoves(board);
+
         List<Edge> connections = board.getConnectionsFrom(p.getPosition());
 
         return connections.stream()
                 .filter(edge -> p.getTickets().hasTicket(edge.getTicket()))
                 .map(Edge::getTo)
                 .filter(position -> !isPositionOccupied(position) || p instanceof MrX)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public boolean movePlayer(String name, int to, Ticket ticket) {
         Player p = players.get(name);
-        if (p instanceof MrX mrX) {
-            if (mrX.isValidMove(to, ticket, board)) {
+        if (p instanceof MrX mrX && mrX.isValidMove(to, ticket, board)) {
                 mrX.move(to, ticket, board);
                 mrXHistory.put(currentRound, new MrXMove(to, ticket));
                 currentRound++;
                 return true;
-            }
         }
         if (p != null && p.isValidMove(to, ticket, board)) {
             p.move(to, ticket, board);
@@ -87,7 +88,7 @@ public class GameState {
     }
 
     //Winning Condition
-    public enum Winner{ MR_X, DETECTIVE, NONE};
+    public enum Winner{ MR_X, DETECTIVE, NONE}
 
     public Winner getWinner(){
         if(!roundManager.isGameOver()){
@@ -122,7 +123,7 @@ public class GameState {
                 currentRound+=2;
                 return true;
             } catch (IllegalArgumentException e) {
-                System.out.println("Ungültiger Doppelzug von MrX: " + e.getMessage());
+                logger.info("Ungültiger Doppelzug von MrX: " + e.getMessage());
             }
         }
         return false;
@@ -131,8 +132,8 @@ public class GameState {
     public String getVisibleMrXPosition() {
         MrX mrX = null;
         for (Player p : players.values()) {
-            if (p instanceof MrX) {
-                mrX = (MrX) p;
+            if (p instanceof MrX mrx) {
+                mrX = mrx;
                 break;
             }
         }

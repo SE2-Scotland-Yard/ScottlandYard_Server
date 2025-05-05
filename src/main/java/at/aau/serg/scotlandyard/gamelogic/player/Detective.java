@@ -3,7 +3,7 @@ package at.aau.serg.scotlandyard.gamelogic.player;
 import at.aau.serg.scotlandyard.gamelogic.player.tickets.PlayerTickets;
 import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class Detective extends Player {
@@ -14,10 +14,10 @@ public class Detective extends Player {
     }
 
     private static PlayerTickets initializeTickets() {
-        Map<Ticket, Integer> initialTickets = new HashMap<>();
-        initialTickets.put(Ticket.taxi, 10);
-        initialTickets.put(Ticket.bus, 8);
-        initialTickets.put(Ticket.underground, 4);
+        Map<Ticket, Integer> initialTickets = new EnumMap<>(Ticket.class);
+        initialTickets.put(Ticket.TAXI, 10);
+        initialTickets.put(Ticket.BUS, 8);
+        initialTickets.put(Ticket.UNDERGROUND, 4);
         return new PlayerTickets(initialTickets);
     }
 }
