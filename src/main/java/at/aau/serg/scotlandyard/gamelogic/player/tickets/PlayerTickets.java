@@ -1,7 +1,6 @@
 package at.aau.serg.scotlandyard.gamelogic.player.tickets;
 
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.Map;
 
 public class PlayerTickets {

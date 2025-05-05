@@ -40,7 +40,7 @@ public class MrX extends Player {
         }
 
         // Simuliere erste Bewegung temporär, um zweiten Zug zu validieren
-        int originalPos = this.getPos();
+        int originalPos = this.getPosition();
         this.setPos(firstTo);
 
         boolean validSecond = isValidMove(secondTo, secondTicket, board);
@@ -58,6 +58,6 @@ public class MrX extends Player {
         tickets.useTicket(secondTicket);
         this.setPos(secondTo);
 
-        logger.info("MrX machte einen Doppelzug: " + firstTo + " → " + secondTo);
+        logger.info("MrX machte einen Doppelzug: {} → {}", firstTo, secondTo);
     }
 }

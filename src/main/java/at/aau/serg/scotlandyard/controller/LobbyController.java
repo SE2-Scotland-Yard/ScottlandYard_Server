@@ -64,8 +64,8 @@ public class LobbyController {
                     .body(new JoinResponse("Lobby ist voll oder bereits gestartet."));
         }
 
-        logger.info("WS-Broadcast: /topic/lobby/" + gameId);
-        logger.info("Spieler in der Lobby: " + lobby.getPlayers());
+        logger.info("WS-Broadcast: /topic/lobby/{}" , gameId);
+        logger.info("Spieler in der Lobby: {}" , lobby.getPlayers());
 
         LobbyState state = LobbyMapper.toLobbyState(lobby);
         messaging.convertAndSend(LOBBY_TOPIC_PREFIX + gameId, state);
@@ -90,7 +90,7 @@ public class LobbyController {
         } else {
             // sonst Broadcast des neuen Zustands
             LobbyState state = LobbyMapper.toLobbyState(lobby);
-            messaging.convertAndSend("/topic/lobby/" + gameId, state);
+            messaging.convertAndSend(LOBBY_TOPIC_PREFIX + gameId, state);
         }
         return ResponseEntity.ok(name + " hat die Lobby verlassen");
     }

@@ -1,6 +1,6 @@
 package at.aau.serg.scotlandyard.gamelogic;
 
-import at.aau.serg.scotlandyard.controller.LobbyController;
+
 import at.aau.serg.scotlandyard.gamelogic.board.Board;
 import at.aau.serg.scotlandyard.gamelogic.board.Edge;
 import at.aau.serg.scotlandyard.gamelogic.player.Detective;
@@ -123,7 +123,7 @@ public class GameState {
                 currentRound+=2;
                 return true;
             } catch (IllegalArgumentException e) {
-                logger.info("Ungültiger Doppelzug von MrX: " + e.getMessage());
+                logger.info("Ungültiger Doppelzug von MrX: {}" , e.getMessage());
             }
         }
         return false;
