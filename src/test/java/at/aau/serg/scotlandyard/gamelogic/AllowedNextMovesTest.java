@@ -41,9 +41,9 @@ class AllowedNextMovesTest {
     @Test
     void testAllowedMovesFrom128_WithoutUndergroundTickets() {
 
-        detective.getTickets().useTicket(Ticket.UNDERGROUND);
-        detective.getTickets().useTicket(Ticket.UNDERGROUND);
-        detective.getTickets().useTicket(Ticket.UNDERGROUND);
+        detective.getTickets().useTicket(Ticket.underground);
+        detective.getTickets().useTicket(Ticket.underground);
+        detective.getTickets().useTicket(Ticket.underground);
 
         List<Integer> allowed = detective.allowedNextMoves(board);
 

@@ -46,7 +46,7 @@ class PlayerMovementTest {
         Detective detective = new Detective();
 
         assertThrows(IllegalArgumentException.class, () ->
-                detective.move(999, Ticket.TAXI, board)); // ungültiges Ziel
+                detective.move(999, Ticket.taxi, board)); // ungültiges Ziel
     }
 
     @Test
@@ -61,7 +61,7 @@ class PlayerMovementTest {
                 .map(Edge::getTo)
                 .findFirst().orElseThrow();
 
-        boolean moved = game.movePlayer("Alice", to, Ticket.TAXI);
+        boolean moved = game.movePlayer("Alice", to, Ticket.taxi);
         assertTrue(moved);
         assertEquals(to, det.getPosition());
     }
@@ -72,7 +72,7 @@ class PlayerMovementTest {
         Detective det = new Detective();
         game.addPlayer("Bob", det);
 
-        boolean moved = game.movePlayer("Bob", 999, Ticket.TAXI);
+        boolean moved = game.movePlayer("Bob", 999, Ticket.taxi);
         assertFalse(moved);
     }
 
@@ -112,7 +112,7 @@ class PlayerMovementTest {
         game.addPlayer("X", mrX);
 
         int to = game.getBoard().getConnectionsFrom(mrX.getPosition()).get(0).getTo();
-        game.movePlayer("X", to, Ticket.TAXI); // Runde 1
+        game.movePlayer("X", to, Ticket.taxi); // Runde 1
 
         String visible = game.getVisibleMrXPosition();
         assertEquals("?", visible);
