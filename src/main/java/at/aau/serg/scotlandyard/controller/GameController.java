@@ -38,8 +38,41 @@ public class GameController {
                        @RequestParam Ticket ticket) {
         GameState game = gameManager.getGame(gameId);
         if (game == null) return "Spiel nicht gefunden!";
+        if (!game.movePlayer(name, to, ticket)) return "Ungültiger Zug!";
         game.movePlayer(name, to, ticket);
+
+        if(game.getWinner() != GameState.Winner.NONE){
+            return getWinner(gameId);
+        }
+
         return "Spieler " + name + " bewegt sich zu " + to + " in Spiel " + gameId;
+    }
+
+    @PostMapping("/moveDouble")
+    public String moveDouble(@RequestParam String gameId,
+                             @RequestParam String name,
+                             @RequestParam int firstTo,
+                             @RequestParam Ticket firstTicket,
+                             @RequestParam int secondTo,
+                             @RequestParam Ticket secondTicket) {
+        GameState game = gameManager.getGame(gameId);
+        if (game == null) return "Spiel nicht gefunden!";
+        if (!game.moveMrXDouble(name, firstTo, firstTicket, secondTo, secondTicket)) {
+            return "Ungültiger Doppelzug!";
+        }
+        return "MrX machte einen Doppelzug: " + firstTo + " → " + secondTo;
+    }
+
+    @GetMapping("/mrXposition")
+    public String getMrXPosition(@RequestParam String gameId) {
+        GameState game = gameManager.getGame(gameId);
+        return (game != null) ? game.getVisibleMrXPosition() : "Spiel nicht gefunden!";
+    }
+
+    @GetMapping("/mrXhistory")
+    public List<String> getMrXHistory(@RequestParam String gameId) {
+        GameState game = gameManager.getGame(gameId);
+        return (game != null) ? game.getMrXMoveHistory() : List.of("Spiel nicht gefunden!");
     }
 
     @GetMapping("/all")
@@ -56,4 +89,17 @@ public class GameController {
                 .toList();
     }
 
+    @GetMapping("/winner")
+    public String getWinner(@RequestParam String gameId) {
+        GameState game = gameManager.getGame(gameId);
+        if (game == null) return "Spiel nicht gefunden!";
+        switch (game.getWinner()) {
+            case MR_X:
+                return "Mr.X hat gewonnen!";
+            case DETECTIVE:
+                return "Detektive haben gewonnen!";
+            default:
+                return "Spiel läuft noch.";
+        }
+    }
 }
