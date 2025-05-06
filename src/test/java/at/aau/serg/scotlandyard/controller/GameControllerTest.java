@@ -167,22 +167,27 @@ class GameControllerTest {
 
     @Test
     void getAllGames_ReturnsListOfGameOverviewDTOs() {
+
         Set<String> gameIds = Set.of("game1", "game2");
-        Map<String, String> players1 = Map.of("player1", "Detective");
-        Map<String, String> players2 = Map.of("player2", "MrX");
-
-
         when(gameManager.getAllGameIds()).thenReturn(gameIds);
-        when(gameManager.getGame("game1")).thenReturn(gameState);
-        when(gameManager.getGame("game2")).thenReturn(gameState);
-        when(gameState.getAllPlayers()).thenReturn(new HashMap<>(), new HashMap<>());
+
+        GameState gameState1 = mock(GameState.class);
+        GameState gameState2 = mock(GameState.class);
+
+        when(gameManager.getGame("game1")).thenReturn(gameState1);
+        when(gameManager.getGame("game2")).thenReturn(gameState2);
+        when(gameState1.getAllPlayers()).thenReturn(new HashMap<>());
+        when(gameState2.getAllPlayers()).thenReturn(new HashMap<>());
 
         List<GameOverviewDTO> result = gameController.getAllGames();
 
         assertEquals(2, result.size());
-        assertEquals("game1", result.get(0).getGameId());
-        assertEquals("game2", result.get(1).getGameId());
 
+        List<String> resultIds = result.stream()
+                .map(GameOverviewDTO::getGameId)
+                .sorted()
+                .toList();
+        assertEquals(List.of("game1", "game2"), resultIds);
     }
 
     @Test
