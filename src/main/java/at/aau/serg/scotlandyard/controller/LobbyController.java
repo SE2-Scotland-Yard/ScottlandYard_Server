@@ -1,16 +1,16 @@
 package at.aau.serg.scotlandyard.controller;
 
 import at.aau.serg.scotlandyard.dto.JoinResponse;
-import at.aau.serg.scotlandyard.dto.LobbyUpdate;
 import at.aau.serg.scotlandyard.gamelogic.Lobby;
 import at.aau.serg.scotlandyard.gamelogic.LobbyManager;
 import at.aau.serg.scotlandyard.dto.LobbyState;
 import at.aau.serg.scotlandyard.dto.LobbyMapper;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.util.List;
@@ -21,7 +21,8 @@ public class LobbyController {
 
     private final LobbyManager lobbyManager;
     private final SimpMessagingTemplate messaging;
-
+    private static final Logger logger = LoggerFactory.getLogger(LobbyController.class);
+    private static final String LOBBY_TOPIC_PREFIX = "/topic/lobby/";
 
 
     public LobbyController(LobbyManager lobbyManager, SimpMessagingTemplate messaging) {
@@ -41,7 +42,7 @@ public class LobbyController {
 
         // 3)  Zustand broadcasten
         LobbyState state = LobbyMapper.toLobbyState(lobby);
-        messaging.convertAndSend("/topic/lobby/" + lobby.getGameId(), state);
+        messaging.convertAndSend(LOBBY_TOPIC_PREFIX + lobby.getGameId(), state);
 
         // 4) State zurück an den Aufrufer
         return state;
@@ -63,11 +64,11 @@ public class LobbyController {
                     .body(new JoinResponse("Lobby ist voll oder bereits gestartet."));
         }
 
-        System.out.println("WS-Broadcast: /topic/lobby/" + gameId);
-        System.out.println("Spieler in der Lobby: " + lobby.getPlayers());
+        logger.info("WS-Broadcast: /topic/lobby/{}" , gameId);
+        logger.info("Spieler in der Lobby: {}" , lobby.getPlayers());
 
         LobbyState state = LobbyMapper.toLobbyState(lobby);
-        messaging.convertAndSend("/topic/lobby/" + gameId, state);
+        messaging.convertAndSend(LOBBY_TOPIC_PREFIX + gameId, state);
 
         return ResponseEntity.ok(new JoinResponse(name + " ist der Lobby " + gameId + " beigetreten."));
     }
@@ -89,7 +90,7 @@ public class LobbyController {
         } else {
             // sonst Broadcast des neuen Zustands
             LobbyState state = LobbyMapper.toLobbyState(lobby);
-            messaging.convertAndSend("/topic/lobby/" + gameId, state);
+            messaging.convertAndSend(LOBBY_TOPIC_PREFIX + gameId, state);
         }
         return ResponseEntity.ok(name + " hat die Lobby verlassen");
     }

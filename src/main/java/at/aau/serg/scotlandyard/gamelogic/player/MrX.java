@@ -3,22 +3,26 @@ package at.aau.serg.scotlandyard.gamelogic.player;
 import at.aau.serg.scotlandyard.gamelogic.board.Board;
 import at.aau.serg.scotlandyard.gamelogic.player.tickets.PlayerTickets;
 import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class MrX extends Player {
+
+    private static final Logger logger = LoggerFactory.getLogger(MrX.class);
 
     public MrX() {
         super(initializeTickets());
     }
 
     private static PlayerTickets initializeTickets() {
-        Map<Ticket, Integer> initialTickets = new HashMap<>();
+        Map<Ticket, Integer> initialTickets = new EnumMap<>(Ticket.class);
 
-        initialTickets.put(Ticket.taxi, 4);
-        initialTickets.put(Ticket.bus, 3);
-        initialTickets.put(Ticket.underground, 3);
+        initialTickets.put(Ticket.TAXI, 4);
+        initialTickets.put(Ticket.BUS, 3);
+        initialTickets.put(Ticket.UNDERGROUND, 3);
         initialTickets.put(Ticket.BLACK, 5);
         initialTickets.put(Ticket.DOUBLE, 2);
 
@@ -36,11 +40,11 @@ public class MrX extends Player {
         }
 
         // Simuliere erste Bewegung temporär, um zweiten Zug zu validieren
-        int originalPos = this.pos;
-        this.pos = firstTo;
+        int originalPos = this.getPosition();
+        this.setPos(firstTo);
 
         boolean validSecond = isValidMove(secondTo, secondTicket, board);
-        this.pos = originalPos; // Position zurücksetzen
+        this.setPos(originalPos); // Position zurücksetzen
 
         if (!validSecond) {
             throw new IllegalArgumentException("Zweiter Zug ungültig!");
@@ -49,11 +53,11 @@ public class MrX extends Player {
         // Zug ist gültig → Tickets verwenden und Position setzen
         tickets.useTicket(Ticket.DOUBLE);
         tickets.useTicket(firstTicket);
-        this.pos = firstTo;
+        this.setPos(firstTo);
 
         tickets.useTicket(secondTicket);
-        this.pos = secondTo;
+        this.setPos(secondTo);
 
-        System.out.println("MrX machte einen Doppelzug: " + firstTo + " → " + secondTo);
+        logger.info("MrX machte einen Doppelzug: {} → {}", firstTo, secondTo);
     }
 }
