@@ -10,4 +10,8 @@
   "id" : 3,
   "username" : "test2",
   "password" : "$2a$10$Q.Uyevb2rSnNpwZpgP1yhuTIwspfXShoAtLw2Ilccy/zLVSXhNeb6"
+}, {
+  "id" : 4,
+  "username" : "nox",
+  "password" : "$2a$10$LRt4ZMt3S4bGQMCIqRMQqOH6W/e11zaoEjdBL0Czl/XjI2xfNZFVS"
 } ]
