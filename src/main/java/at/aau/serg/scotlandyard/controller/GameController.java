@@ -14,7 +14,7 @@ import java.util.Map;
 @RequestMapping("/game")
 public class GameController {
 
-    private static final String GAME_NOT_FOUND = "Spiel nicht gefunden";
+    public static final String GAME_NOT_FOUND = "Spiel nicht gefunden";
     private final GameManager gameManager;
 
     public GameController(GameManager gameManager) {
