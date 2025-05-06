@@ -1,16 +1,14 @@
 package at.aau.serg.scotlandyard.websocket;
 
-import at.aau.serg.scotlandyard.websocket.WebSockethandler;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
-import java.io.IOException;
+
 
 import static org.mockito.Mockito.*;
-//import org.mockito.ArgumentMatcher;
 import static org.mockito.ArgumentMatchers.argThat;
 class WebSockethandlerTest {
 
@@ -57,21 +55,21 @@ class WebSockethandlerTest {
     @Test
     void testAfterConnectionClosed_RemovesSessionAndBroadcasts() throws Exception {
         // Arrange
-        WebSocketSession session2 = mock(WebSocketSession.class);
+        WebSocketSession session2Local = mock(WebSocketSession.class);
         when(session1.getId()).thenReturn("session1");
-        when(session2.getId()).thenReturn("session2");
+        when(session2Local.getId()).thenReturn("session2Local");
 
         when(session1.isOpen()).thenReturn(true);
-        when(session2.isOpen()).thenReturn(true);
+        when(session2Local.isOpen()).thenReturn(true);
 
         handler.afterConnectionEstablished(session1);
-        handler.afterConnectionEstablished(session2);
+        handler.afterConnectionEstablished(session2Local);
 
         // Act
         handler.afterConnectionClosed(session1, null);
 
         // Assert
-        verify(session2, atLeastOnce()).sendMessage(argThat((TextMessage msg) ->
+        verify(session2Local, atLeastOnce()).sendMessage(argThat((TextMessage msg) ->
                 msg.getPayload().contains("Player left: session1")
         ));
     }

@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class PlayerMovementTest {
+class PlayerMovementTest {
 
     private Board board;
 
@@ -25,7 +25,7 @@ public class PlayerMovementTest {
 
     @Test
     void testValidMove_ShouldUpdatePositionAndUseTicket() {
-        Board board = new Board();
+        board = new Board();
         Detective detective = new Detective();
         int from = detective.getPosition();
         List<Edge> connections = board.getConnectionsFrom(from);
@@ -42,11 +42,11 @@ public class PlayerMovementTest {
 
     @Test
     void testInvalidMove_ShouldThrowException() {
-        Board board = new Board();
+        board = new Board();
         Detective detective = new Detective();
 
         assertThrows(IllegalArgumentException.class, () ->
-                detective.move(999, Ticket.taxi, board)); // ungültiges Ziel
+                detective.move(999, Ticket.TAXI, board)); // ungültiges Ziel
     }
 
     @Test
@@ -56,12 +56,12 @@ public class PlayerMovementTest {
         game.addPlayer("Alice", det);
 
         int from = det.getPosition();
-        Board board = game.getBoard();
+        board = game.getBoard();
         int to = board.getConnectionsFrom(from).stream()
                 .map(Edge::getTo)
                 .findFirst().orElseThrow();
 
-        boolean moved = game.movePlayer("Alice", to, Ticket.taxi);
+        boolean moved = game.movePlayer("Alice", to, Ticket.TAXI);
         assertTrue(moved);
         assertEquals(to, det.getPosition());
     }
@@ -72,7 +72,7 @@ public class PlayerMovementTest {
         Detective det = new Detective();
         game.addPlayer("Bob", det);
 
-        boolean moved = game.movePlayer("Bob", 999, Ticket.taxi);
+        boolean moved = game.movePlayer("Bob", 999, Ticket.TAXI);
         assertFalse(moved);
     }
 
@@ -83,7 +83,7 @@ public class PlayerMovementTest {
         game.addPlayer("X", mrX);
 
         int start = mrX.getPosition();
-        Board board = game.getBoard();
+        board = game.getBoard();
 
         // Erster gültiger Zug
         int firstMove = board.getConnectionsFrom(start).get(0).getTo();
@@ -112,7 +112,7 @@ public class PlayerMovementTest {
         game.addPlayer("X", mrX);
 
         int to = game.getBoard().getConnectionsFrom(mrX.getPosition()).get(0).getTo();
-        game.movePlayer("X", to, Ticket.taxi); // Runde 1
+        game.movePlayer("X", to, Ticket.TAXI); // Runde 1
 
         String visible = game.getVisibleMrXPosition();
         assertEquals("?", visible);
@@ -124,7 +124,7 @@ public class PlayerMovementTest {
         GameState game = new GameState();
         MrX mrX = new MrX();
         game.addPlayer("X", mrX);
-        Board board = game.getBoard();
+        board = game.getBoard();
 
         int currentPos = mrX.getPosition();
 
@@ -149,7 +149,7 @@ public class PlayerMovementTest {
         MrX mrX = new MrX();
         game.addPlayer("X", mrX);
 
-        Board board = game.getBoard();
+        board = game.getBoard();
         int from = mrX.getPosition();
         Edge first = board.getConnectionsFrom(from).get(0);
 

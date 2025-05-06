@@ -8,6 +8,10 @@ import java.util.Map;
 
 public class LobbyMapper {
 
+    private LobbyMapper() {
+        throw new UnsupportedOperationException("LobbyMapper ist eine Hilfsklasse und darf nicht instanziiert werden.");
+    }
+
     public static LobbyState toLobbyState(Lobby lobby) {
 
         Map<String, String> roleMap = new HashMap<>();
