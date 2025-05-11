@@ -166,7 +166,8 @@ class GameStateTest {
 
     @Test
     void testGetVisibleMrXPositionMrXIsNull() {
-        String position = gameState.getVisibleMrXPosition();
+        GameState gameStateNew = new GameState();
+        String position = gameStateNew.getVisibleMrXPosition();
         assertEquals("MrX nicht im Spiel", position);
     }
 
