@@ -116,4 +116,54 @@ class LobbyTest {
         assertFalse(ready);
     }
 
+    @Test
+    void testIsPlayerReady(){
+        lobby.addPlayer("Player");
+        lobby.markReady("Player");
+        boolean ready = lobby.isPlayerReady("Player");
+        assertTrue(ready);
+    }
+
+    @Test
+    void testIsPlayerReadyNotReady(){
+        lobby.addPlayer("Player1");
+        boolean ready = lobby.isPlayerReady("Player");
+        assertFalse(ready);
+    }
+
+    @Test
+    void testGetGameID(){
+        assertEquals("lobby", lobby.getGameId());
+    }
+
+    @Test
+    void tesIsPublic(){
+        assertTrue(lobby.isPublic());
+    }
+
+    @Test
+    void testHasEnoughPlayers(){
+        lobby.addPlayer("Player1");
+        assertTrue(lobby.hasEnoughPlayers());
+    }
+
+    @Test
+    void testHasEnoughPlayersNot(){
+        assertFalse(lobby.hasEnoughPlayers());
+    }
+
+    @Test
+    void testIsStarted(){
+        assertFalse(lobby.isStarted());
+    }
+
+    @Test
+    void testGetAllSelectedRoles(){
+        lobby.addPlayer("Player1");
+        lobby.addPlayer("Player2");
+        lobby.selectRole("Player1", Role.DETECTIVE);
+        lobby.selectRole("Player2", Role.DETECTIVE);
+        assertEquals(2, lobby.getAllSelectedRoles().size());
+    }
+
 }
