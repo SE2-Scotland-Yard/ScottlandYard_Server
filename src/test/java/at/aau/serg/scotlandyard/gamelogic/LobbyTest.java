@@ -70,4 +70,50 @@ class LobbyTest {
         assertFalse(success);
     }
 
+    @Test
+    void testSelecetRole(){
+        lobby.addPlayer("Player1");
+        lobby.addPlayer("Player2");
+
+        lobby.selectRole("Player1", Role.MRX);
+        lobby.selectRole("Player2", Role.DETECTIVE);
+
+        assertEquals(2, lobby.getPlayers().size());
+        assertEquals(Role.MRX, lobby.getSelectedRole("Player1"));
+        assertEquals(Role.DETECTIVE, lobby.getSelectedRole("Player2"));
+    }
+
+    @Test
+    void testSelectRoleNoPlayer(){
+        lobby.addPlayer("Player1");
+        lobby.selectRole("Player2", Role.DETECTIVE);
+        assertEquals(1, lobby.getPlayers().size());
+        assertEquals(null, lobby.getSelectedRole("Player2"));
+    }
+
+    @Test
+    void testAllReady(){
+        lobby.addPlayer("Player1");
+        lobby.addPlayer("Player2");
+        lobby.markReady("Player1");
+        lobby.markReady("Player2");
+        boolean ready = lobby.allReady();
+        assertTrue(ready);
+    }
+
+    @Test
+    void testAllReadyEmpty(){
+        boolean ready = lobby.allReady();
+        assertFalse(ready);
+    }
+
+    @Test
+    void testAllReadyNotReady(){
+        lobby.addPlayer("Player1");
+        lobby.addPlayer("Player2");
+        lobby.markReady("Player1");
+        boolean ready = lobby.allReady();
+        assertFalse(ready);
+    }
+
 }
