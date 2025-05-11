@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.*;
 
@@ -36,12 +38,13 @@ class GameControllerTest {
     }
 
     @Test
-    void getMoves_WhenGameNotFound_ReturnsEmptyList() {
+    void getMoves_WhenGameNotFound_ReturnsNotFound() {
         when(gameManager.getGame(GAME_ID)).thenReturn(null);
 
-        List<Integer> result = gameController.getMoves(GAME_ID, PLAYER_NAME);
+        ResponseEntity<?> response = gameController.getMoves(GAME_ID, PLAYER_NAME);
 
-        assertTrue(result.isEmpty());
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        assertEquals("Game mit ID '" + GAME_ID + "' nicht gefunden.", response.getBody());
     }
 
     @Test
@@ -50,9 +53,11 @@ class GameControllerTest {
         when(gameManager.getGame(GAME_ID)).thenReturn(gameState);
         when(gameState.getAllowedMoves(PLAYER_NAME)).thenReturn(expectedMoves);
 
-        List<Integer> result = gameController.getMoves(GAME_ID, PLAYER_NAME);
+        ResponseEntity<?> response = gameController.getMoves(GAME_ID, PLAYER_NAME);
 
-        assertEquals(expectedMoves, result);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(expectedMoves, response.getBody());
     }
 
     @Test
