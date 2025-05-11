@@ -20,4 +20,10 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
         config.enableSimpleBroker("/topic", "/queue"); // Für Broadcasts
         config.setApplicationDestinationPrefixes("/app"); // Für Messages vom Client
     }
+
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+        registration.setSendTimeLimit(15 * 1000) // 15 Sekunden Timeout
+                .setSendBufferSizeLimit(512 * 1024); // 512 KB Buffer
+    }
 }
