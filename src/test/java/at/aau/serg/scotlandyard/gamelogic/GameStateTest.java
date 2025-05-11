@@ -22,7 +22,6 @@ public class GameStateTest {
     private GameState gameState;
     private MrX mrX;
     private Detective detective;
-    private Board board;
 
     @BeforeEach
     void setUp() {
@@ -31,7 +30,6 @@ public class GameStateTest {
         detective = mock(Detective.class);
         gameState.addPlayer("MrX", mrX);
         gameState.addPlayer("Detective", detective);
-        board = new Board();
     }
 
     @Test
@@ -122,5 +120,15 @@ public class GameStateTest {
         assertFalse(successful);
     }
 
+    @Test
+    void testMoveMrXDouble(){
+        boolean successful = gameState.moveMrXDouble("MrX", 1, Ticket.TAXI, 1, Ticket.TAXI);
+        assertTrue(successful);
+    }
+
+    @Test void testMoveMrXInvalid(){
+        boolean successful = gameState.moveMrXDouble("Detective", 1, Ticket.TAXI, 1, Ticket.TAXI);
+        assertFalse(successful);
+    }
 
 }
