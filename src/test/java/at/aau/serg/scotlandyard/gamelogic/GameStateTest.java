@@ -1,16 +1,14 @@
 package at.aau.serg.scotlandyard.gamelogic;
+
 import at.aau.serg.scotlandyard.gamelogic.board.Board;
-import at.aau.serg.scotlandyard.gamelogic.board.Edge;
 import at.aau.serg.scotlandyard.gamelogic.player.Detective;
 import at.aau.serg.scotlandyard.gamelogic.player.MrX;
-import at.aau.serg.scotlandyard.gamelogic.player.Player;
 import at.aau.serg.scotlandyard.gamelogic.player.tickets.PlayerTickets;
 import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import java.lang.reflect.Field;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,6 +31,8 @@ public class GameStateTest {
         gameState.addPlayer("Detective", detective);
     }
 
+    //---------------AddPlayer()---------------------
+
     @Test
     void testAddPlayer() {
         assertEquals(2, gameState.getAllPlayers().size());
@@ -40,8 +40,11 @@ public class GameStateTest {
         assertTrue(gameState.getAllPlayers().containsKey("Detective"));
     }
 
+    //----------------GetAllowedMoves()---------------------
+
+
     @Test
-    void testGetAllowedMoves(){
+    void testGetAllowedMoves() {
         when(mrX.getPosition()).thenReturn(1);
         when(mrX.getTickets()).thenReturn(getDefaultTickets());
 
@@ -62,13 +65,16 @@ public class GameStateTest {
     }
 
     @Test
-    void testGetAllowedMovesPlayerIsNull(){
+    void testGetAllowedMovesPlayerIsNull() {
         List<Integer> allowedMoves = gameState.getAllowedMoves("Nothing");
         assertTrue(allowedMoves.isEmpty());
     }
 
+    //---------------MovePlayer()---------------------
+
+
     @Test
-    void testMovePlayerMrX(){
+    void testMovePlayerMrX() {
         when(mrX.isValidMove(anyInt(), any(Ticket.class), any(Board.class))).thenReturn(true);
         boolean successful = gameState.movePlayer("MrX", 1, Ticket.TAXI);
 
@@ -78,7 +84,7 @@ public class GameStateTest {
     }
 
     @Test
-    void testMovePlayerMrXInvalid(){
+    void testMovePlayerMrXInvalid() {
         when(mrX.isValidMove(anyInt(), any(Ticket.class), any(Board.class))).thenReturn(false);
         boolean successful = gameState.movePlayer("MrX", 1, Ticket.TAXI);
 
@@ -86,7 +92,7 @@ public class GameStateTest {
     }
 
     @Test
-    void testMovePlayerDetective(){
+    void testMovePlayerDetective() {
         when(detective.isValidMove(anyInt(), any(Ticket.class), any(Board.class))).thenReturn(true);
         boolean successful = gameState.movePlayer("Detective", 1, Ticket.TAXI);
 
@@ -95,8 +101,8 @@ public class GameStateTest {
     }
 
     @Test
-    void testMovePlayerDetectivePositionTaken(){
-        Detective detective2 =  mock(Detective.class);
+    void testMovePlayerDetectivePositionTaken() {
+        Detective detective2 = mock(Detective.class);
         gameState.addPlayer("Detective2", detective2);
         when(detective2.isValidMove(anyInt(), any(Ticket.class), any(Board.class))).thenReturn(false);
         when(detective.getPosition()).thenReturn(1);
@@ -108,7 +114,7 @@ public class GameStateTest {
     }
 
     @Test
-    void testMovePlayerDetectiveInvalid(){
+    void testMovePlayerDetectiveInvalid() {
         when(detective.isValidMove(anyInt(), any(Ticket.class), any(Board.class))).thenReturn(false);
         boolean successful = gameState.movePlayer("Detective", 1, Ticket.TAXI);
 
@@ -116,31 +122,36 @@ public class GameStateTest {
     }
 
     @Test
-    void testMovePlayerNull(){
+    void testMovePlayerNull() {
         boolean successful = gameState.movePlayer("Nothing", 1, Ticket.TAXI);
         assertFalse(successful);
     }
 
+    //---------------moveMrXDouble()---------------------
+
+
     @Test
-    void testMoveMrXDouble(){
+    void testMoveMrXDouble() {
         boolean successful = gameState.moveMrXDouble("MrX", 1, Ticket.TAXI, 1, Ticket.TAXI);
         assertTrue(successful);
     }
 
     @Test
-    void testMoveMrXDoubleInvalid(){
+    void testMoveMrXDoubleInvalid() {
         boolean successful = gameState.moveMrXDouble("Detective", 1, Ticket.TAXI, 1, Ticket.TAXI);
         assertFalse(successful);
     }
 
+    //---------------getVisibleMrXPosition()---------------------
+
     @Test
-    void testGetVisibleMrXPositionRoundNIsotReveal(){
+    void testGetVisibleMrXPositionRoundNIsotReveal() {
         String position = gameState.getVisibleMrXPosition();
         assertEquals("?", position);
     }
 
     @Test
-    void testGetVisibleMrXPositionRoundIsReveal(){
+    void testGetVisibleMrXPositionRoundIsReveal() {
         when(mrX.getPosition()).thenReturn(1);
         when(mrX.isValidMove(anyInt(), any(Ticket.class), any(Board.class))).thenReturn(true);
 
@@ -153,14 +164,17 @@ public class GameStateTest {
         assertEquals("1", position);
     }
 
-    @Test void testGetVisibleMrXPositionMrXIsNull(){
+    @Test
+    void testGetVisibleMrXPositionMrXIsNull() {
         GameState gameState = new GameState();
         String position = gameState.getVisibleMrXPosition();
         assertEquals("MrX nicht im Spiel", position);
     }
 
+    //---------------Getter---------------------
+
     @Test
-    void testGetMrXMoveHistory(){
+    void testGetMrXMoveHistory() {
         when(mrX.isValidMove(anyInt(), any(Ticket.class), any(Board.class))).thenReturn(true);
 
         gameState.movePlayer("MrX", 1, Ticket.TAXI);
@@ -210,13 +224,13 @@ public class GameStateTest {
     }
 
     @Test
-    void testGetRevealRounds(){
+    void testGetRevealRounds() {
         List<Integer> revealRounds = gameState.getRevealRounds();
         assertEquals(List.of(3, 8, 13, 18, 24), revealRounds);
     }
 
     @Test
-    void testGetBoard(){
+    void testGetBoard() {
         Board board = gameState.getBoard();
         assertNotNull(board);
     }
