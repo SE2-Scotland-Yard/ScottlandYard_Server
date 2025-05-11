@@ -100,6 +100,9 @@ public class GameState {
         return Winner.MR_X;
     }
 
+
+    // Never uses because Valid moves are handled by Player
+    /*
     public boolean validateMove(String playerName, int target, Ticket ticket) {
         Player player = players.get(playerName);
 
@@ -107,6 +110,7 @@ public class GameState {
                 && player.getTickets().hasTicket(ticket)
                 && (player instanceof MrX || !isPositionOccupied(target));
     }
+     */
 
     public boolean isPositionOccupied(int position) {
         return players.values().stream()
