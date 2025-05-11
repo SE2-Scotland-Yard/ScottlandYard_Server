@@ -12,10 +12,10 @@ import org.mockito.Mockito;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
 
 
 public class GameStateTest {
@@ -66,6 +66,60 @@ public class GameStateTest {
     void testGetAllowedMovesPlayerIsNull(){
         List<Integer> allowedMoves = gameState.getAllowedMoves("Nothing");
         assertTrue(allowedMoves.isEmpty());
+    }
+
+    @Test
+    void testMovePlayerMrX(){
+        when(mrX.isValidMove(anyInt(), any(Ticket.class), any(Board.class))).thenReturn(true);
+        boolean successful = gameState.movePlayer("MrX", 1, Ticket.TAXI);
+
+        verify(mrX).move(eq(1), eq(Ticket.TAXI), any(Board.class));
+        assertTrue(successful);
+
+    }
+
+    @Test
+    void testMovePlayerMrXInvalid(){
+        when(mrX.isValidMove(anyInt(), any(Ticket.class), any(Board.class))).thenReturn(false);
+        boolean successful = gameState.movePlayer("MrX", 1, Ticket.TAXI);
+
+        assertFalse(successful);
+    }
+
+    @Test
+    void testMovePlayerDetective(){
+        when(detective.isValidMove(anyInt(), any(Ticket.class), any(Board.class))).thenReturn(true);
+        boolean successful = gameState.movePlayer("Detective", 1, Ticket.TAXI);
+
+        verify(detective).move(eq(1), eq(Ticket.TAXI), any(Board.class));
+        assertTrue(successful);
+    }
+
+    @Test
+    void testMovePlayerDetectivePositionTaken(){
+        Detective detective2 =  mock(Detective.class);
+        gameState.addPlayer("Detective2", detective2);
+        when(detective2.isValidMove(anyInt(), any(Ticket.class), any(Board.class))).thenReturn(false);
+        when(detective.getPosition()).thenReturn(1);
+
+        boolean successful = gameState.movePlayer("Detective2", 1, Ticket.TAXI);
+
+        assertFalse(successful);
+
+    }
+
+    @Test
+    void testMovePlayerDetectiveInvalid(){
+        when(detective.isValidMove(anyInt(), any(Ticket.class), any(Board.class))).thenReturn(false);
+        boolean successful = gameState.movePlayer("Detective", 1, Ticket.TAXI);
+
+        assertFalse(successful);
+    }
+
+    @Test
+    void testMovePlayerNull(){
+        boolean successful = gameState.movePlayer("Nothing", 1, Ticket.TAXI);
+        assertFalse(successful);
     }
 
 
