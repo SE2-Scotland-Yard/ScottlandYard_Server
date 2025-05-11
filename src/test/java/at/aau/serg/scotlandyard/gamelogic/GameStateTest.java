@@ -9,6 +9,7 @@ import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import java.lang.reflect.Field;
 
 import java.util.*;
 
@@ -156,6 +157,68 @@ public class GameStateTest {
         GameState gameState = new GameState();
         String position = gameState.getVisibleMrXPosition();
         assertEquals("MrX nicht im Spiel", position);
+    }
+
+    @Test
+    void testGetMrXMoveHistory(){
+        when(mrX.isValidMove(anyInt(), any(Ticket.class), any(Board.class))).thenReturn(true);
+
+        gameState.movePlayer("MrX", 1, Ticket.TAXI);
+        gameState.movePlayer("MrX", 1, Ticket.TAXI);
+        gameState.movePlayer("MrX", 1, Ticket.TAXI);
+
+        List<String> history = gameState.getMrXMoveHistory();
+        assertEquals(3, history.size());
+    }
+
+    @Test
+    void testGetWinnerNone() throws Exception {
+        RoundManager roundManager = mock(RoundManager.class);
+        when(roundManager.isGameOver()).thenReturn(false);
+
+        Field nameField = GameState.class.getDeclaredField("roundManager");
+        nameField.setAccessible(true); // Make private field accessible
+        nameField.set(gameState, roundManager);
+
+        assertEquals(GameState.Winner.NONE, gameState.getWinner());
+    }
+
+    @Test
+    void testGetWinnerDetective() throws Exception {
+        RoundManager roundManager = mock(RoundManager.class);
+        when(roundManager.isGameOver()).thenReturn(true);
+        when(roundManager.isMrXCaptured()).thenReturn(true);
+
+        Field nameField = GameState.class.getDeclaredField("roundManager");
+        nameField.setAccessible(true); // Make private field accessible
+        nameField.set(gameState, roundManager);
+
+        assertEquals(GameState.Winner.DETECTIVE, gameState.getWinner());
+    }
+
+    @Test
+    void testGetWinnerMrX() throws Exception {
+        RoundManager roundManager = mock(RoundManager.class);
+        when(roundManager.isGameOver()).thenReturn(true);
+        when(roundManager.isMrXCaptured()).thenReturn(false);
+
+        Field nameField = GameState.class.getDeclaredField("roundManager");
+        nameField.setAccessible(true); // Make private field accessible
+        nameField.set(gameState, roundManager);
+
+        assertEquals(GameState.Winner.MR_X, gameState.getWinner());
+    }
+
+    @Test
+    void testGetRevealRounds(){
+        List<Integer> revealRounds = gameState.getRevealRounds();
+        assertEquals(List.of(3, 8, 13, 18, 24), revealRounds);
+    }
+
+    @Test
+    void testGetBoard(){
+        Board board = gameState.getBoard();
+        assertNotNull(board);
     }
 
 }
