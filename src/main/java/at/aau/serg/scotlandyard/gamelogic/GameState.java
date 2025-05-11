@@ -35,6 +35,13 @@ public class GameState {
         this.roundManager = new RoundManager(detectives, mrX);
     }
 
+    public boolean canMove(String playerName, int target, Ticket ticket) {
+        Player player = players.get(playerName);
+        return player != null
+                && getAllowedMoves(playerName).contains(target)
+                && player.getTickets().hasTicket(ticket)
+                && (player instanceof MrX || !isPositionOccupied(target));
+    }
     public void addPlayer(String name, Player player) {
         players.put(name, player);
     }
