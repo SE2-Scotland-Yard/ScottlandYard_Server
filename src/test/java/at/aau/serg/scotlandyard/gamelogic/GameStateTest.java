@@ -17,7 +17,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
 
-public class GameStateTest {
+class GameStateTest {
     private GameState gameState;
     private MrX mrX;
     private Detective detective;
@@ -166,7 +166,6 @@ public class GameStateTest {
 
     @Test
     void testGetVisibleMrXPositionMrXIsNull() {
-        GameState gameState = new GameState();
         String position = gameState.getVisibleMrXPosition();
         assertEquals("MrX nicht im Spiel", position);
     }
