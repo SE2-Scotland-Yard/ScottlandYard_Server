@@ -126,9 +126,36 @@ public class GameStateTest {
         assertTrue(successful);
     }
 
-    @Test void testMoveMrXInvalid(){
+    @Test
+    void testMoveMrXDoubleInvalid(){
         boolean successful = gameState.moveMrXDouble("Detective", 1, Ticket.TAXI, 1, Ticket.TAXI);
         assertFalse(successful);
+    }
+
+    @Test
+    void testGetVisibleMrXPositionRoundNIsotReveal(){
+        String position = gameState.getVisibleMrXPosition();
+        assertEquals("?", position);
+    }
+
+    @Test
+    void testGetVisibleMrXPositionRoundIsReveal(){
+        when(mrX.getPosition()).thenReturn(1);
+        when(mrX.isValidMove(anyInt(), any(Ticket.class), any(Board.class))).thenReturn(true);
+
+        gameState.movePlayer("MrX", 1, Ticket.TAXI);
+        gameState.movePlayer("MrX", 1, Ticket.TAXI);
+        gameState.movePlayer("MrX", 1, Ticket.TAXI);
+
+
+        String position = gameState.getVisibleMrXPosition();
+        assertEquals("1", position);
+    }
+
+    @Test void testGetVisibleMrXPositionMrXIsNull(){
+        GameState gameState = new GameState();
+        String position = gameState.getVisibleMrXPosition();
+        assertEquals("MrX nicht im Spiel", position);
     }
 
 }
