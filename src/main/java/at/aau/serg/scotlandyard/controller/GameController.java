@@ -4,6 +4,8 @@ import at.aau.serg.scotlandyard.dto.GameOverviewDTO;
 import at.aau.serg.scotlandyard.gamelogic.GameManager;
 import at.aau.serg.scotlandyard.gamelogic.GameState;
 import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -11,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/game")
+@RequestMapping("/api/game")
 public class GameController {
 
     public static final String GAME_NOT_FOUND = "Spiel nicht gefunden";
@@ -22,11 +24,19 @@ public class GameController {
     }
 
     @GetMapping("/allowedMoves")
-    public List<Integer> getMoves(@RequestParam String gameId,
-                                  @RequestParam String name) {
+    public ResponseEntity<?> getMoves(
+            @RequestParam String gameId,
+            @RequestParam String name
+    ) {
         GameState game = gameManager.getGame(gameId);
-        if (game == null) return List.of();
-        return game.getAllowedMoves(name);
+
+        if (game == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Game mit ID '" + gameId + "' nicht gefunden.");
+        }
+
+        List<Integer> allowedMoves = game.getAllowedMoves(name);
+        return ResponseEntity.ok(allowedMoves);
     }
 
     @PostMapping("/move")
