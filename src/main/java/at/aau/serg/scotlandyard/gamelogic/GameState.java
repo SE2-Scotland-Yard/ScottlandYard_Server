@@ -41,7 +41,7 @@ public class GameState {
 
     public List<Integer> getAllowedMoves(String name) {
         Player p = players.get(name);
-        if (p == null || board == null) {
+        if (p == null) {
             return List.of();
         }
 
