@@ -39,42 +39,50 @@ public class GameController {
         return ResponseEntity.ok(allowedMoves);
     }
     @PostMapping("/move")
-    public String move(
+    public Map<String, String> move(
             @RequestParam String gameId,
             @RequestParam String name,
             @RequestParam int to,
             @RequestParam String gotTicket
     ) {
+
+        Map<String, String> response = new HashMap<>();
         // 1. Ticket validieren
         Ticket ticket;
         try {
             ticket = Ticket.valueOf(gotTicket);
         } catch (IllegalArgumentException e) {
-            return "Ungültiges Ticket: " + gotTicket;
+            response.put("message", "Ungültiges Ticket: " + gotTicket);
+            return response;
         }
 
         // 2. Spiel validieren
         GameState game = gameManager.getGame(gameId);
         if (game == null) {
-            return "Spiel nicht gefunden!";
+            response.put("message", "Spiel nicht gefunden!");
+            return response;
         }
 
         // 3. Spieler existiert?
         if (!game.getAllPlayers().containsKey(name)) {
-            return "Spieler " + name + " existiert nicht!";
+            response.put("message", "Spieler " + name + " existiert nicht!");
+            return response;
         }
 
         // 4. Zug durchführen
         if (!game.movePlayer(name, to, ticket)) {
-            return "Ungültiger Zug!";
+            response.put("message", "Ungültiger Zug!");
+            return response;
         }
 
         // 5. Gewinner prüfen
         if (game.getWinner() != GameState.Winner.NONE) {
-            return getWinner(gameId);
+            response.put("message", getWinner(gameId));
+            return response;
         }
 
-        return "Spieler " + name + " bewegt sich zu " + to + " in Spiel " + gameId;
+        response.put("message", "Spieler " + name + " bewegt sich zu " + to + " in Spiel " + gameId);
+        return response;
     }
 
     @PostMapping("/moveDouble")
