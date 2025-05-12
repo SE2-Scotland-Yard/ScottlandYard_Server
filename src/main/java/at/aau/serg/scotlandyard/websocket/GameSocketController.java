@@ -8,6 +8,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class GameSocketController {
@@ -26,7 +27,7 @@ public class GameSocketController {
         GameState game = gameManager.getGame(gameId);
         if (game == null) return;
 
-        List<Integer> allowedMoves = game.getAllowedMoves(playerName);
+        List<Map.Entry<Integer, Ticket>> allowedMoves = game.getAllowedMoves(playerName);
         messaging.convertAndSend("/topic/game/" + gameId + "/allowedMoves/" + playerName, allowedMoves);
     }
 

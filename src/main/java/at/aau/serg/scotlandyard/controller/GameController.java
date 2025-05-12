@@ -35,7 +35,10 @@ public class GameController {
                     .body("Game mit ID '" + gameId + "' nicht gefunden.");
         }
 
-        List<Integer> allowedMoves = game.getAllowedMoves(name);
+        List<Map.Entry<Integer, String>> allowedMoves = game.getAllowedMoves(name).stream()
+                .map(entry -> Map.entry(entry.getKey(), entry.getValue().name())) // Ticket zu String konvertieren
+                .toList();
+        System.out.println(allowedMoves);
         return ResponseEntity.ok(allowedMoves);
     }
     @PostMapping("/move")
