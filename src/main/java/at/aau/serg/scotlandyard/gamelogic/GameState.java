@@ -23,10 +23,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 
-@Component
+
 public class GameState {
-    private final SimpMessagingTemplate messaging= null;
-    private String gameId;
+    private final SimpMessagingTemplate messaging;
+    private final String gameId;
     private final Board board;
     private final Map<String, Player> players = new HashMap<>();
     private RoundManager roundManager;
@@ -38,10 +38,10 @@ public class GameState {
 
 
 
-    @Autowired
-    public GameState(@Value("${game.id:default-id}") String gameId) {
+    public GameState(String gameId, SimpMessagingTemplate messaging) {
         this.board = new Board();
         this.gameId = gameId;
+        this.messaging = messaging;
     }
 
     public void initRoundManager(List<Detective>detectives, MrX mrX){ //nicht ideal
