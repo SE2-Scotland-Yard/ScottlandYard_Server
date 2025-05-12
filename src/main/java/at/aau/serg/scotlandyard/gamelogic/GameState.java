@@ -59,7 +59,7 @@ public class GameState {
         players.put(name, player);
     }
 
-    public List<Integer> getAllowedMoves(String name) {
+    public List<Map.Entry<Integer, Ticket>> getAllowedMoves(String name) {
         Player p = players.get(name);
         if (p == null || board == null) {
             return List.of();
@@ -69,8 +69,8 @@ public class GameState {
 
         return connections.stream()
                 .filter(edge -> p.getTickets().hasTicket(edge.getTicket()))
-                .map(Edge::getTo)
-                .filter(position -> !isPositionOccupied(position) || p instanceof MrX)
+                .filter(edge -> !isPositionOccupied(edge.getTo()) || p instanceof MrX)
+                .map(edge -> Map.entry(edge.getTo(), edge.getTicket()))
                 .toList();
     }
 
