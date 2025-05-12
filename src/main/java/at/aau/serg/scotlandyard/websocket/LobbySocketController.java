@@ -1,13 +1,11 @@
 package at.aau.serg.scotlandyard.websocket;
 
-import at.aau.serg.scotlandyard.dto.ReadyMessage;
-import at.aau.serg.scotlandyard.dto.LobbyState;
-import at.aau.serg.scotlandyard.dto.LobbyMapper;
-import at.aau.serg.scotlandyard.dto.RoleSelectionMessage;
+import at.aau.serg.scotlandyard.dto.*;
 import at.aau.serg.scotlandyard.gamelogic.*;
 import at.aau.serg.scotlandyard.gamelogic.player.Detective;
 import at.aau.serg.scotlandyard.gamelogic.player.MrX;
 import at.aau.serg.scotlandyard.gamelogic.player.Player;
+import com.google.gson.Gson;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -39,9 +37,10 @@ public class LobbySocketController {
 
         if (lobby.allReady() && lobby.hasEnoughPlayers() && !lobby.isStarted()) {
             lobby.markStarted();
+
+            messaging.convertAndSend("/topic/lobby/" + gameId, LobbyMapper.toLobbyState(lobby));//lobbyUpdate
             GameState game = initializeGame(gameId, lobby); // Spiel initialisieren
-            messaging.convertAndSend("/topic/lobby/" + gameId, LobbyMapper.toLobbyState(lobby));
-            messaging.convertAndSend("/topic/lobby/" + gameId, game.getAllPlayers()); // Spielzustand an Clients
+
         }
     }
     private GameState initializeGame(String gameId, Lobby lobby) {
@@ -61,8 +60,14 @@ public class LobbySocketController {
             }
         }
 
-        if (mrX != null && !detectives.isEmpty()) {
+        if (!detectives.isEmpty()) {
             game.initRoundManager(detectives, mrX); // RoundManager korrekt initialisieren
+
+            GameUpdate update = GameMapper.mapToGameUpdate(gameId, game.getAllPlayers());
+
+            System.out.println("Sending GameUpdate to /topic/game/" + gameId);
+            System.out.println("GameUpdate payload: " + new Gson().toJson(update));
+            messaging.convertAndSend("/topic/game/" + gameId, GameMapper.mapToGameUpdate(gameId, game.getAllPlayers()));//positionen
         }
 
         return game;

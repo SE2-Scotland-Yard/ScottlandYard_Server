@@ -7,15 +7,19 @@ import java.util.Map;
 
 public class GameUpdate {
     private String gameId;
+    private Map<String, Integer> playerPositions;
 
-    private Map<Player,Integer> playerPositions;
-
-
-    public GameUpdate(String gameId, Map<Player,Integer> playerPositions) {
+    public GameUpdate(String gameId, Map<String, Integer> playerPositions) {
         this.gameId = gameId;
-         this.playerPositions = playerPositions;
-
+        this.playerPositions = playerPositions;
     }
 
+    public String getGameId() {
+        return gameId;
+    }
 
+    public Map<String, Integer> getPlayerPositions() {
+        return playerPositions;
+    }
 }
+

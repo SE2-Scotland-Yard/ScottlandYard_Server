@@ -11,6 +11,7 @@ public abstract class Player {
    protected final PlayerTickets tickets;
    private int pos;
 
+
     protected Player(PlayerTickets tickets) {
         this.tickets = tickets;
         this.pos = new Random().nextInt(199)+1;
