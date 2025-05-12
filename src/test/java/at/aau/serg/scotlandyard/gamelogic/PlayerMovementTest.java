@@ -51,7 +51,7 @@ class PlayerMovementTest {
 
     @Test
     void testMovePlayer_ValidMove_ShouldReturnTrue() {
-        GameState game = new GameState();
+        GameState game = new GameState("1234");
         Detective det = new Detective();
         game.addPlayer("Alice", det);
 
@@ -68,7 +68,7 @@ class PlayerMovementTest {
 
     @Test
     void testMovePlayer_InvalidTarget_ShouldReturnFalse() {
-        GameState game = new GameState();
+        GameState game = new GameState("1234");
         Detective det = new Detective();
         game.addPlayer("Bob", det);
 
@@ -78,7 +78,7 @@ class PlayerMovementTest {
 
     @Test
     void testVisibleMrXPosition_ShouldReturnPositionOnRevealRound() {
-        GameState game = new GameState();
+        GameState game = new GameState("1234");
         MrX mrX = new MrX();
         game.addPlayer("X", mrX);
 
@@ -107,7 +107,7 @@ class PlayerMovementTest {
 
     @Test
     void testInvisibleMrXPosition_ShouldReturnQuestionMark() {
-        GameState game = new GameState();
+        GameState game = new GameState("1234");
         MrX mrX = new MrX();
         game.addPlayer("X", mrX);
 
@@ -121,7 +121,7 @@ class PlayerMovementTest {
     @ParameterizedTest
     @ValueSource(ints = {1, 2, 4, 5, 6, 7}) // unsichtbare Runden
     void testMrXShouldBeInvisibleInTheseRounds(int roundsToMove) {
-        GameState game = new GameState();
+        GameState game = new GameState("1234");
         MrX mrX = new MrX();
         game.addPlayer("X", mrX);
         board = game.getBoard();
@@ -145,7 +145,7 @@ class PlayerMovementTest {
 
     @Test
     void testMrXDoubleMove_ShouldExecuteTwoMovesAndStoreHistory() {
-        GameState game = new GameState();
+        GameState game = new GameState("1234");
         MrX mrX = new MrX();
         game.addPlayer("X", mrX);
 

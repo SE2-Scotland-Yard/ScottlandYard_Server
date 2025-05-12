@@ -12,7 +12,7 @@ public class GameManager {
     private final Map<String, GameState> games = new HashMap<>();
 
     public GameState getOrCreateGame(String gameId) {
-        return games.computeIfAbsent(gameId, id -> new GameState());
+        return games.computeIfAbsent(gameId, id -> new GameState(gameId));
     }
 
     public GameState getGame(String gameId) {

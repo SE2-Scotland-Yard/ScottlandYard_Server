@@ -1,15 +1,22 @@
 package at.aau.serg.scotlandyard.gamelogic;
 
 
+import at.aau.serg.scotlandyard.dto.GameMapper;
+import at.aau.serg.scotlandyard.dto.LobbyMapper;
 import at.aau.serg.scotlandyard.gamelogic.board.Board;
 import at.aau.serg.scotlandyard.gamelogic.board.Edge;
 import at.aau.serg.scotlandyard.gamelogic.player.Detective;
 import at.aau.serg.scotlandyard.gamelogic.player.MrX;
 import at.aau.serg.scotlandyard.gamelogic.player.Player;
 import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +25,8 @@ import java.util.ArrayList;
 
 @Component
 public class GameState {
-
+    private final SimpMessagingTemplate messaging= null;
+    private String gameId;
     private final Board board;
     private final Map<String, Player> players = new HashMap<>();
     private RoundManager roundManager;
@@ -27,8 +35,13 @@ public class GameState {
     private final Map<Integer, MrXMove> mrXHistory = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(GameState.class);
 
-    public GameState() {
+
+
+
+    @Autowired
+    public GameState(@Value("${game.id:default-id}") String gameId) {
         this.board = new Board();
+        this.gameId = gameId;
     }
 
     public void initRoundManager(List<Detective>detectives, MrX mrX){ //nicht ideal
@@ -81,7 +94,7 @@ public class GameState {
                 }
             }
         }
-
+        messaging.convertAndSend("/topic/game"+gameId, GameMapper.mapToGameUpdate(gameId, getAllPlayers()));
         return false;
     }
 

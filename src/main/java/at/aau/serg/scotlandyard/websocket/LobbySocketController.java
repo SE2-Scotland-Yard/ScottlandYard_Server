@@ -63,10 +63,10 @@ public class LobbySocketController {
         if (!detectives.isEmpty()) {
             game.initRoundManager(detectives, mrX); // RoundManager korrekt initialisieren
 
-            GameUpdate update = GameMapper.mapToGameUpdate(gameId, game.getAllPlayers());
+            //GameUpdate update = GameMapper.mapToGameUpdate(gameId, game.getAllPlayers());
 
             System.out.println("Sending GameUpdate to /topic/game/" + gameId);
-            System.out.println("GameUpdate payload: " + new Gson().toJson(update));
+            //System.out.println("GameUpdate payload: " + new Gson().toJson(update));
             messaging.convertAndSend("/topic/game/" + gameId, GameMapper.mapToGameUpdate(gameId, game.getAllPlayers()));//positionen
         }
 
@@ -80,6 +80,13 @@ public class LobbySocketController {
             lobby.selectRole(msg.getPlayerId(), msg.getRole());
             messaging.convertAndSend("/topic/lobby/" + msg.getGameId(), LobbyMapper.toLobbyState(lobby));
         }
+    }
+
+
+    @MessageMapping("/lobby/game/update")
+    public void gameUpdate(String gameId, GameState game) {
+
+        messaging.convertAndSend("/topic/game/update" + gameId, GameMapper.mapToGameUpdate(gameId, game.getAllPlayers()));
     }
 
 

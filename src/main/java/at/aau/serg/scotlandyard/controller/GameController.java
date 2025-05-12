@@ -43,7 +43,9 @@ public class GameController {
     public String move(@RequestParam String gameId,
                        @RequestParam String name,
                        @RequestParam int to,
-                       @RequestParam Ticket ticket) {
+                       @RequestParam String gotTicket) {
+
+        Ticket ticket = Ticket.valueOf(gotTicket);
         GameState game = gameManager.getGame(gameId);
         if (game == null) return GAME_NOT_FOUND;
         if (!game.movePlayer(name, to, ticket)) return "Ungültiger Zug!";
