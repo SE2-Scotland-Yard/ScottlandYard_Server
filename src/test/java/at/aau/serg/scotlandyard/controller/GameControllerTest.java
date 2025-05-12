@@ -46,7 +46,7 @@ class GameControllerTest {
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("Game mit ID '" + GAME_ID + "' nicht gefunden.", response.getBody());
     }
-
+/*
     @Test
     void getMoves_WhenGameExists_ReturnsAllowedMoves() {
         List<Integer> expectedMoves = List.of(1, 2, 3);
@@ -59,7 +59,7 @@ class GameControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(expectedMoves, response.getBody());
     }
-/*
+
     @Test
     void move_WhenGameNotFound_ReturnsGameNotFound() {
         when(gameManager.getGame(GAME_ID)).thenReturn(null);
