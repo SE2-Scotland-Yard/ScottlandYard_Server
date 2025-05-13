@@ -1,5 +1,6 @@
 package at.aau.serg.scotlandyard.dto;
 
+import at.aau.serg.scotlandyard.gamelogic.player.MrX;
 import at.aau.serg.scotlandyard.gamelogic.player.Player;
 
 import java.util.HashMap;
@@ -13,8 +14,9 @@ public class GameMapper {
         for (Map.Entry<String, Player> entry : playerMap.entrySet()) {
             String name = entry.getKey();
             Player player = entry.getValue();
-
-            playerPositions.put(name, player.getPosition());
+            if(!(player instanceof MrX)) {
+                playerPositions.put(name, player.getPosition());
+            }
         }
 
         return new GameUpdate(gameId, playerPositions);
