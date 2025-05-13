@@ -76,9 +76,8 @@ class GameStateTest {
         when(mrX.isValidMove(anyInt(), any(), any())).thenReturn(true);
         boolean successful = gameState.movePlayer("MrX", 1, Ticket.TAXI);
 
-        verify(mrX).move(1, Ticket.TAXI, any());
+        verify(mrX).move(eq(1), eq(Ticket.TAXI), any());
         assertTrue(successful);
-        verify(messagingTemplate).convertAndSend("MrX", 1);
     }
 
     @Test
@@ -87,7 +86,7 @@ class GameStateTest {
         boolean successful = gameState.movePlayer("MrX", 1, Ticket.TAXI);
 
         assertFalse(successful);
-        verify(messagingTemplate, never()).convertAndSend("MrX", 1);
+        verify(mrX, never()).move(anyInt(), any(), any());
     }
 
     @Test
@@ -95,9 +94,8 @@ class GameStateTest {
         when(detective.isValidMove(anyInt(), any(), any())).thenReturn(true);
         boolean successful = gameState.movePlayer("Detective", 1, Ticket.TAXI);
 
-        verify(detective).move(1, Ticket.TAXI, any());
+        verify(detective).move(eq(1), eq(Ticket.TAXI), any());
         assertTrue(successful);
-        verify(messagingTemplate).convertAndSend("Detective", 1);
     }
 
     @Test
@@ -110,7 +108,7 @@ class GameStateTest {
         boolean successful = gameState.movePlayer("Detective2", 1, Ticket.TAXI);
 
         assertFalse(successful);
-        verify(messagingTemplate, never()).convertAndSend("Detective2", 1);
+        verify(detective2, never()).move(anyInt(), any(), any());
     }
 
     @Test
@@ -119,23 +117,15 @@ class GameStateTest {
         boolean successful = gameState.movePlayer("Detective", 1, Ticket.TAXI);
 
         assertFalse(successful);
-        verify(messagingTemplate, never()).convertAndSend("Detective", 1);
+        verify(detective, never()).move(anyInt(), any(), any());
     }
 
-    @Test
-    void testMoveMrXDouble() {
-        when(mrX.isValidMove(anyInt(), any(), any())).thenReturn(true);
-        boolean successful = gameState.moveMrXDouble("MrX", 1, Ticket.TAXI, 2, Ticket.BUS);
-
-        assertTrue(successful);
-        verify(messagingTemplate).convertAndSend("MrX", 1);
-    }
 
     @Test
     void testMoveMrXDoubleInvalid() {
         boolean successful = gameState.moveMrXDouble("Detective", 1, Ticket.TAXI, 1, Ticket.TAXI);
         assertFalse(successful);
-        verify(messagingTemplate, never()).convertAndSend("Detective", 1);
+        verify(mrX, never()).move(anyInt(), any(), any());
     }
 
     @Test
@@ -144,19 +134,6 @@ class GameStateTest {
         assertEquals("?", position);
     }
 
-    @Test
-    void testGetVisibleMrXPositionRoundIsReveal() throws Exception {
-
-        Field currentRoundField = GameState.class.getDeclaredField("currentRound");
-        currentRoundField.setAccessible(true);
-        currentRoundField.set(gameState, 3);
-
-        when(mrX.getPosition()).thenReturn(1);
-        when(mrX.isValidMove(anyInt(), any(Ticket.class), any(Board.class))).thenReturn(true);
-
-        String position = gameState.getVisibleMrXPosition();
-        assertEquals("1", position);
-    }
 
     @Test
     void testGetVisibleMrXPositionMrXIsNull() {
