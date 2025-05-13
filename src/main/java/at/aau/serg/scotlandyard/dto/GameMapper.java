@@ -1,0 +1,31 @@
+package at.aau.serg.scotlandyard.dto;
+
+import at.aau.serg.scotlandyard.gamelogic.player.Player;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class GameMapper {
+
+    public static GameUpdate mapToGameUpdate(String gameId, Map<String, Player> playerMap) {
+        Map<String, Integer> playerPositions = new HashMap<>();
+
+        for (Map.Entry<String, Player> entry : playerMap.entrySet()) {
+            String name = entry.getKey();
+            Player player = entry.getValue();
+
+            playerPositions.put(name, player.getPosition());
+        }
+
+        return new GameUpdate(gameId, playerPositions);
+    }
+}
+
+/* beispielaufruf:
+
+GameUpdate update = GameMapper.mapToGameUpdate(
+    gameId,
+    gameState.getAllPlayers()
+);
+
+ */

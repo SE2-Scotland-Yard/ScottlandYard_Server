@@ -1,5 +1,6 @@
 package at.aau.serg.scotlandyard.gamelogic;
 
+import at.aau.serg.scotlandyard.dto.GameMapper;
 import at.aau.serg.scotlandyard.gamelogic.board.Board;
 import at.aau.serg.scotlandyard.gamelogic.board.Edge;
 import at.aau.serg.scotlandyard.gamelogic.player.Detective;
@@ -9,23 +10,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class PlayerMovementTest {
 
     private Board board;
+    private SimpMessagingTemplate messagingTemplate;
 
     @BeforeEach
     void setup() {
         board = new Board();
+        messagingTemplate = mock(SimpMessagingTemplate.class);
     }
 
     @Test
     void testValidMove_ShouldUpdatePositionAndUseTicket() {
-        board = new Board();
         Detective detective = new Detective();
         int from = detective.getPosition();
         List<Edge> connections = board.getConnectionsFrom(from);
@@ -37,38 +41,42 @@ class PlayerMovementTest {
         detective.move(validEdge.getTo(), validEdge.getTicket(), board);
 
         assertEquals(validEdge.getTo(), detective.getPosition());
-        assertEquals(9, detective.getTickets().getTicketCount(validEdge.getTicket())); // initial - 1
+        assertEquals(9, detective.getTickets().getTicketCount(validEdge.getTicket()));
     }
 
     @Test
     void testInvalidMove_ShouldThrowException() {
-        board = new Board();
         Detective detective = new Detective();
-
         assertThrows(IllegalArgumentException.class, () ->
-                detective.move(999, Ticket.TAXI, board)); // ungültiges Ziel
+                detective.move(999, Ticket.TAXI, board));
     }
 
     @Test
     void testMovePlayer_ValidMove_ShouldReturnTrue() {
-        GameState game = new GameState();
+
+        GameState game = new GameState("1234", null);
+
         Detective det = new Detective();
         game.addPlayer("Alice", det);
 
         int from = det.getPosition();
-        board = game.getBoard();
-        int to = board.getConnectionsFrom(from).stream()
-                .map(Edge::getTo)
-                .findFirst().orElseThrow();
+        Edge validEdge = game.getBoard().getConnectionsFrom(from).stream()
+                .filter(e -> det.getTickets().hasTicket(e.getTicket()))
+                .findFirst()
+                .orElseThrow();
 
-        boolean moved = game.movePlayer("Alice", to, Ticket.TAXI);
+        int to = validEdge.getTo();
+        Ticket ticket = validEdge.getTicket();
+
+        boolean moved = game.movePlayer("Alice", to, ticket);
+
         assertTrue(moved);
         assertEquals(to, det.getPosition());
     }
 
     @Test
     void testMovePlayer_InvalidTarget_ShouldReturnFalse() {
-        GameState game = new GameState();
+        GameState game = new GameState("1234", messagingTemplate);
         Detective det = new Detective();
         game.addPlayer("Bob", det);
 
@@ -78,89 +86,69 @@ class PlayerMovementTest {
 
     @Test
     void testVisibleMrXPosition_ShouldReturnPositionOnRevealRound() {
-        GameState game = new GameState();
+        GameState game = new GameState("1234", messagingTemplate);
         MrX mrX = new MrX();
         game.addPlayer("X", mrX);
 
-        int start = mrX.getPosition();
-        board = game.getBoard();
-
-        // Erster gültiger Zug
-        int firstMove = board.getConnectionsFrom(start).get(0).getTo();
-        Ticket firstTicket = board.getConnectionsFrom(start).get(0).getTicket();
-        game.movePlayer("X", firstMove, firstTicket); // Runde 1
-
-        // Zweiter gültiger Zug
-        int secondMove = board.getConnectionsFrom(firstMove).get(0).getTo();
-        Ticket secondTicket = board.getConnectionsFrom(firstMove).get(0).getTicket();
-        game.movePlayer("X", secondMove, secondTicket); // Runde 2
-
-        // Dritter gültiger Zug (worauf getestet wird testen)
-        int thirdMove = board.getConnectionsFrom(secondMove).get(0).getTo();
-        Ticket thirdTicket = board.getConnectionsFrom(secondMove).get(0).getTicket();
-        game.movePlayer("X", thirdMove, thirdTicket); // Runde 3 = Sichtbar
+        moveMrXToRound(game, mrX, 3);
 
         String visible = game.getVisibleMrXPosition();
-        assertEquals(String.valueOf(thirdMove), visible);
+        assertEquals(String.valueOf(mrX.getPosition()), visible);
     }
-
 
     @Test
     void testInvisibleMrXPosition_ShouldReturnQuestionMark() {
-        GameState game = new GameState();
+        GameState game = new GameState("1234", messagingTemplate);
         MrX mrX = new MrX();
         game.addPlayer("X", mrX);
 
-        int to = game.getBoard().getConnectionsFrom(mrX.getPosition()).get(0).getTo();
-        game.movePlayer("X", to, Ticket.TAXI); // Runde 1
+        moveMrXToRound(game, mrX, 1);
 
         String visible = game.getVisibleMrXPosition();
         assertEquals("?", visible);
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {1, 2, 4, 5, 6, 7}) // unsichtbare Runden
+    @ValueSource(ints = {1, 2, 4, 5, 6, 7})
     void testMrXShouldBeInvisibleInTheseRounds(int roundsToMove) {
-        GameState game = new GameState();
+        GameState game = new GameState("1234", messagingTemplate);
         MrX mrX = new MrX();
         game.addPlayer("X", mrX);
-        board = game.getBoard();
 
-        int currentPos = mrX.getPosition();
+        moveMrXToRound(game, mrX, roundsToMove);
 
-        for (int i = 1; i <= roundsToMove; i++) {
-            List<Edge> connections = board.getConnectionsFrom(currentPos);
-            Edge edge = connections.get(0);
-
-            game.movePlayer("X", edge.getTo(), edge.getTicket());
-            currentPos = edge.getTo();
-        }
-
-        // Prüft Sichtbarkeit NACH dem letzten Move
         if (!game.getRevealRounds().contains(roundsToMove)) {
-            String visible = game.getVisibleMrXPosition();
-            assertEquals("?", visible, "MrX sollte in Runde " + roundsToMove + " unsichtbar sein!");
+            assertEquals("?", game.getVisibleMrXPosition());
         }
     }
 
     @Test
     void testMrXDoubleMove_ShouldExecuteTwoMovesAndStoreHistory() {
-        GameState game = new GameState();
+
+        GameState game = new GameState("1234", null);
         MrX mrX = new MrX();
         game.addPlayer("X", mrX);
 
-        board = game.getBoard();
         int from = mrX.getPosition();
         Edge first = board.getConnectionsFrom(from).get(0);
+        Edge second = board.getConnectionsFrom(first.getTo()).get(0);
 
-        int mid = first.getTo();
-        Edge second = board.getConnectionsFrom(mid).get(0);
+        boolean moved = game.moveMrXDouble("X",
+                first.getTo(), first.getTicket(),
+                second.getTo(), second.getTicket());
 
-        boolean moved = game.moveMrXDouble("X", first.getTo(), first.getTicket(), second.getTo(), second.getTicket());
-        assertTrue(moved);
-        assertEquals(second.getTo(), mrX.getPosition());
-        assertEquals(2, game.getMrXMoveHistory().size());
+        assertTrue(moved, "Double move should be successful");
+        assertEquals(second.getTo(), mrX.getPosition(), "Position should be updated to second move");
+        assertEquals(2, game.getMrXMoveHistory().size(), "History should contain both moves");
     }
 
-}
+    private void moveMrXToRound(GameState game, MrX mrX, int targetRound) {
+        int currentPos = mrX.getPosition();
 
+        for (int i = 1; i <= targetRound; i++) {
+            Edge edge = board.getConnectionsFrom(currentPos).get(0);
+            game.movePlayer("X", edge.getTo(), edge.getTicket());
+            currentPos = edge.getTo();
+        }
+    }
+}

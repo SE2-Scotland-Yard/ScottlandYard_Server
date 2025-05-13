@@ -9,7 +9,10 @@ import java.util.*;
 public class RoundManager {
     private final List<Detective>detectives;
     private final MrX mrX;
+    private int mrXPosition;
     private final List<Player>turnOrder;
+
+    private Map<Player,Integer> playerPosition = new HashMap<>();
 
     private int currentPlayerTurn = 0; //index that indicates which player is next
     private int currentRound = 1;
@@ -27,6 +30,28 @@ public class RoundManager {
 
     public Player getCurrentPlayer() {
         return turnOrder.get(currentPlayerTurn);
+    }
+
+
+    public Map<Player,Integer> getPlayerPositions(){
+
+        for(Player p : turnOrder){
+            if(p instanceof Detective){
+                playerPosition.put(p,p.getPosition());
+            }
+            else if(p instanceof MrX){
+                if(revealRounds.contains(currentRound)){
+                    mrXPosition=p.getPosition();
+
+                }
+                playerPosition.put(p,mrXPosition);
+            }
+
+
+        }
+
+
+        return playerPosition;
     }
 
     public void nextTurn(){
@@ -67,6 +92,10 @@ public class RoundManager {
 
     public MrX getMrX(){
         return mrX;
+    }
+
+    public List<Player> getTurnOrder() {
+        return turnOrder;
     }
 
 

@@ -1,13 +1,11 @@
 package at.aau.serg.scotlandyard.websocket;
 
-import at.aau.serg.scotlandyard.dto.ReadyMessage;
-import at.aau.serg.scotlandyard.dto.LobbyState;
-import at.aau.serg.scotlandyard.dto.LobbyMapper;
-import at.aau.serg.scotlandyard.dto.RoleSelectionMessage;
+import at.aau.serg.scotlandyard.dto.*;
 import at.aau.serg.scotlandyard.gamelogic.*;
 import at.aau.serg.scotlandyard.gamelogic.player.Detective;
 import at.aau.serg.scotlandyard.gamelogic.player.MrX;
 import at.aau.serg.scotlandyard.gamelogic.player.Player;
+import com.google.gson.Gson;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -31,48 +29,64 @@ public class LobbySocketController {
     @MessageMapping("/lobby/ready")
     public void handleReady(ReadyMessage msg) {
         String gameId = msg.getGameId();
-        String player = msg.getPlayerId();
-
         Lobby lobby = lobbyManager.getLobby(gameId);
         if (lobby == null) return;
 
-        // Spieler als ready markieren
-        lobby.markReady(player);
+        lobby.markReady(msg.getPlayerId());
+        messaging.convertAndSend("/topic/lobby/" + gameId, LobbyMapper.toLobbyState(lobby));
 
-        //aktueller Lobby-Zustand
-        LobbyState state = LobbyMapper.toLobbyState(lobby);
-        messaging.convertAndSend("/topic/lobby/" + gameId, state);
-
-        // Wenn alle ready → Spiel starten
         if (lobby.allReady() && lobby.hasEnoughPlayers() && !lobby.isStarted()) {
             lobby.markStarted();
 
-            GameState game = gameManager.getOrCreateGame(gameId);
-            List<String> playerNames = new ArrayList<>(lobby.getPlayers());
-            for (String name : playerNames) {
-                Role role = lobby.getSelectedRole(name);
-                Player p = (role == Role.MRX) ? new MrX() : new Detective();
-                game.addPlayer(name, p);
-            }
+            messaging.convertAndSend("/topic/lobby/" + gameId, LobbyMapper.toLobbyState(lobby));//lobbyUpdate
+            GameState game = initializeGame(gameId, lobby); // Spiel initialisieren
 
-
-
-            // Spiel gestartet
-            LobbyState startedState = LobbyMapper.toLobbyState(lobby);
-            messaging.convertAndSend("/topic/lobby/" + gameId, startedState);
         }
+    }
+    private GameState initializeGame(String gameId, Lobby lobby) {
+        GameState game = gameManager.getOrCreateGame(gameId);
+        List<Detective> detectives = new ArrayList<>();
+        MrX mrX = null;
+
+        for (String playerName : lobby.getPlayers()) {
+            Role role = lobby.getSelectedRole(playerName);
+            Player player = (role == Role.MRX) ? new MrX() : new Detective();
+            game.addPlayer(playerName, player);
+
+            if (role == Role.MRX) {
+                mrX = (MrX) player;
+            } else {
+                detectives.add((Detective) player);
+            }
+        }
+
+        if (!detectives.isEmpty()) {
+            game.initRoundManager(detectives, mrX); // RoundManager korrekt initialisieren
+
+            //GameUpdate update = GameMapper.mapToGameUpdate(gameId, game.getAllPlayers());
+
+            System.out.println("Sending GameUpdate to /topic/game/" + gameId);
+            //System.out.println("GameUpdate payload: " + new Gson().toJson(update));
+            messaging.convertAndSend("/topic/game/" + gameId, GameMapper.mapToGameUpdate(gameId, game.getAllPlayers()));//positionen
+        }
+
+        return game;
     }
 
     @MessageMapping("/lobby/role")
     public void selectRole(RoleSelectionMessage msg) {
         Lobby lobby = lobbyManager.getLobby(msg.getGameId());
-        if (lobby != null && lobby.getPlayers().contains(msg.getPlayerId())) {
+        if (lobby != null) {
             lobby.selectRole(msg.getPlayerId(), msg.getRole());
-
-
-            LobbyState state = LobbyMapper.toLobbyState(lobby);
-            messaging.convertAndSend("/topic/lobby/" + msg.getGameId(), state);
+            messaging.convertAndSend("/topic/lobby/" + msg.getGameId(), LobbyMapper.toLobbyState(lobby));
         }
+    }
+
+
+    @MessageMapping("/lobby/game/update")
+    public void gameUpdate(String gameId, GameState game) {
+
+        messaging.convertAndSend("/topic/game/update" + gameId, GameMapper.mapToGameUpdate(gameId, game.getAllPlayers()));
     }
 
 

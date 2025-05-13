@@ -1,24 +1,32 @@
 package at.aau.serg.scotlandyard.gamelogic;
 
 
+import at.aau.serg.scotlandyard.dto.GameMapper;
+import at.aau.serg.scotlandyard.dto.LobbyMapper;
 import at.aau.serg.scotlandyard.gamelogic.board.Board;
 import at.aau.serg.scotlandyard.gamelogic.board.Edge;
 import at.aau.serg.scotlandyard.gamelogic.player.Detective;
 import at.aau.serg.scotlandyard.gamelogic.player.MrX;
 import at.aau.serg.scotlandyard.gamelogic.player.Player;
 import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
 
-@Component
-public class GameState {
 
+public class GameState {
+    private final SimpMessagingTemplate messaging;
+    private final String gameId;
     private final Board board;
     private final Map<String, Player> players = new HashMap<>();
     private RoundManager roundManager;
@@ -27,19 +35,31 @@ public class GameState {
     private final Map<Integer, MrXMove> mrXHistory = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(GameState.class);
 
-    public GameState() {
+
+
+
+    public GameState(String gameId, SimpMessagingTemplate messaging) {
         this.board = new Board();
+        this.gameId = gameId;
+        this.messaging = messaging;
     }
 
     public void initRoundManager(List<Detective>detectives, MrX mrX){ //nicht ideal
         this.roundManager = new RoundManager(detectives, mrX);
     }
 
+    public boolean canMove(String playerName, int target, Ticket ticket) {
+        Player player = players.get(playerName);
+        return player != null
+                && getAllowedMoves(playerName).contains(target)
+                && player.getTickets().hasTicket(ticket)
+                && (player instanceof MrX || !isPositionOccupied(target));
+    }
     public void addPlayer(String name, Player player) {
         players.put(name, player);
     }
 
-    public List<Integer> getAllowedMoves(String name) {
+    public List<Map.Entry<Integer, Ticket>> getAllowedMoves(String name) {
         Player p = players.get(name);
         if (p == null) {
             return List.of();
@@ -49,8 +69,8 @@ public class GameState {
 
         return connections.stream()
                 .filter(edge -> p.getTickets().hasTicket(edge.getTicket()))
-                .map(Edge::getTo)
-                .filter(position -> !isPositionOccupied(position) || p instanceof MrX)
+                .filter(edge -> !isPositionOccupied(edge.getTo()) || p instanceof MrX)
+                .map(edge -> Map.entry(edge.getTo(), edge.getTicket()))
                 .toList();
     }
 
@@ -74,7 +94,7 @@ public class GameState {
                 }
             }
         }
-
+        messaging.convertAndSend("/topic/game"+gameId, GameMapper.mapToGameUpdate(gameId, getAllPlayers()));
         return false;
     }
 
@@ -173,3 +193,6 @@ class MrXMove {
         return ticket;
     }
 }
+
+
+

@@ -5,10 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Board {
     private Map<Integer, List<Edge>> adjacencyList = new HashMap<>();
@@ -26,4 +24,19 @@ public class Board {
     public List<Edge> getConnectionsFrom(int node) {
         return adjacencyList.getOrDefault(node, Collections.emptyList());
     }
+
+    public Set<Integer> getAllNodes() {
+        Set<Integer> allNodes = adjacencyList.keySet();
+
+
+        for (List<Edge> edges : adjacencyList.values()) {
+            allNodes.addAll(edges.stream()
+                    .map(Edge::getTo)
+                    .collect(Collectors.toSet()));
+        }
+
+        return allNodes;
+    }
+
+
 }

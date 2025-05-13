@@ -4,6 +4,8 @@ import at.aau.serg.scotlandyard.dto.GameOverviewDTO;
 import at.aau.serg.scotlandyard.gamelogic.GameManager;
 import at.aau.serg.scotlandyard.gamelogic.GameState;
 import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -11,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/game")
+@RequestMapping("/api/game")
 public class GameController {
 
     public static final String GAME_NOT_FOUND = "Spiel nicht gefunden";
@@ -22,28 +24,68 @@ public class GameController {
     }
 
     @GetMapping("/allowedMoves")
-    public List<Integer> getMoves(@RequestParam String gameId,
-                                  @RequestParam String name) {
+    public ResponseEntity<?> getMoves(
+            @RequestParam String gameId,
+            @RequestParam String name
+    ) {
         GameState game = gameManager.getGame(gameId);
-        if (game == null) return List.of();
-        return game.getAllowedMoves(name);
-    }
 
-    @PostMapping("/move")
-    public String move(@RequestParam String gameId,
-                       @RequestParam String name,
-                       @RequestParam int to,
-                       @RequestParam Ticket ticket) {
-        GameState game = gameManager.getGame(gameId);
-        if (game == null) return GAME_NOT_FOUND;
-        if (!game.movePlayer(name, to, ticket)) return "Ungültiger Zug!";
-        game.movePlayer(name, to, ticket);
-
-        if(game.getWinner() != GameState.Winner.NONE){
-            return getWinner(gameId);
+        if (game == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Game mit ID '" + gameId + "' nicht gefunden.");
         }
 
-        return "Spieler " + name + " bewegt sich zu " + to + " in Spiel " + gameId;
+        List<Map.Entry<Integer, String>> allowedMoves = game.getAllowedMoves(name).stream()
+                .map(entry -> Map.entry(entry.getKey(), entry.getValue().name())) // Ticket zu String konvertieren
+                .toList();
+        System.out.println(allowedMoves);
+        return ResponseEntity.ok(allowedMoves);
+    }
+    @PostMapping("/move")
+    public Map<String, String> move(
+            @RequestParam String gameId,
+            @RequestParam String name,
+            @RequestParam int to,
+            @RequestParam String gotTicket
+    ) {
+
+        Map<String, String> response = new HashMap<>();
+        // 1. Ticket validieren
+        Ticket ticket;
+        try {
+            ticket = Ticket.valueOf(gotTicket);
+        } catch (IllegalArgumentException e) {
+            response.put("message", "Ungültiges Ticket: " + gotTicket);
+            return response;
+        }
+
+        // 2. Spiel validieren
+        GameState game = gameManager.getGame(gameId);
+        if (game == null) {
+            response.put("message", "Spiel nicht gefunden!");
+            return response;
+        }
+
+        // 3. Spieler existiert?
+        if (!game.getAllPlayers().containsKey(name)) {
+            response.put("message", "Spieler " + name + " existiert nicht!");
+            return response;
+        }
+
+        // 4. Zug durchführen
+        if (!game.movePlayer(name, to, ticket)) {
+            response.put("message", "Ungültiger Zug!");
+            return response;
+        }
+
+        // 5. Gewinner prüfen
+        if (game.getWinner() != GameState.Winner.NONE) {
+            response.put("message", getWinner(gameId));
+            return response;
+        }
+
+        response.put("message", "Spieler " + name + " bewegt sich zu " + to + " in Spiel " + gameId);
+        return response;
     }
 
     @PostMapping("/moveDouble")
