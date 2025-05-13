@@ -1,16 +1,25 @@
 package at.aau.serg.scotlandyard.gamelogic;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
+@ExtendWith(MockitoExtension.class)
 class GameManagerTest {
+
+    @Mock
+    private SimpMessagingTemplate messagingTemplate;
 
     @Test
     void getOrCreateGame_newGame() {
-        GameManager gameManager = new GameManager();
+        GameManager gameManager = new GameManager(messagingTemplate);
         String gameId = "TESTGAME1";
         GameState gameState = gameManager.getOrCreateGame(gameId);
         assertNotNull(gameState);
@@ -19,7 +28,7 @@ class GameManagerTest {
 
     @Test
     void getOrCreateGame_existingGame() {
-        GameManager gameManager = new GameManager();
+        GameManager gameManager = new GameManager(messagingTemplate);
         String gameId = "TESTGAME2";
         GameState gameState1 = gameManager.getOrCreateGame(gameId);
         GameState gameState2 = gameManager.getOrCreateGame(gameId);
@@ -30,7 +39,7 @@ class GameManagerTest {
 
     @Test
     void getGame_existingGame() {
-        GameManager gameManager = new GameManager();
+        GameManager gameManager = new GameManager(messagingTemplate);
         String gameId = "TESTGAME3";
         GameState createdState = gameManager.getOrCreateGame(gameId);
         GameState retrievedState = gameManager.getGame(gameId);
@@ -40,14 +49,14 @@ class GameManagerTest {
 
     @Test
     void getGame_nonExistingGame() {
-        GameManager gameManager = new GameManager();
+        GameManager gameManager = new GameManager(messagingTemplate);
         GameState retrievedState = gameManager.getGame("NONEXISTING");
         assertNull(retrievedState);
     }
 
     @Test
     void removeGame_existingGame() {
-        GameManager gameManager = new GameManager();
+        GameManager gameManager = new GameManager(messagingTemplate);
         String gameId = "TESTGAME4";
         gameManager.getOrCreateGame(gameId);
         assertTrue(gameManager.getAllGameIds().contains(gameId));
@@ -58,14 +67,14 @@ class GameManagerTest {
 
     @Test
     void removeGame_nonExistingGame() {
-        GameManager gameManager = new GameManager();
-        gameManager.removeGame("ANOTHERNONEXISTING"); // Sollte keine Fehler verursachen
+        GameManager gameManager = new GameManager(messagingTemplate);
+        gameManager.removeGame("ANOTHERNONEXISTING");
         assertFalse(gameManager.getAllGameIds().contains("ANOTHERNONEXISTING"));
     }
 
     @Test
     void getAllGameIds_multipleGames() {
-        GameManager gameManager = new GameManager();
+        GameManager gameManager = new GameManager(messagingTemplate);
         gameManager.getOrCreateGame("GAME_A");
         gameManager.getOrCreateGame("GAME_B");
         gameManager.getOrCreateGame("GAME_C");
@@ -78,7 +87,7 @@ class GameManagerTest {
 
     @Test
     void getAllGameIds_noGames() {
-        GameManager gameManager = new GameManager();
+        GameManager gameManager = new GameManager(messagingTemplate);
         Set<String> allGameIds = gameManager.getAllGameIds();
         assertTrue(allGameIds.isEmpty());
     }
