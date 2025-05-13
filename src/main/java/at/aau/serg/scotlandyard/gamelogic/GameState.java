@@ -61,7 +61,7 @@ public class GameState {
 
     public List<Map.Entry<Integer, Ticket>> getAllowedMoves(String name) {
         Player p = players.get(name);
-        if (p == null || board == null) {
+        if (p == null) {
             return List.of();
         }
 
@@ -118,14 +118,6 @@ public class GameState {
             return Winner.DETECTIVE;
         }
         return Winner.MR_X;
-    }
-
-    public boolean validateMove(String playerName, int target, Ticket ticket) {
-        Player player = players.get(playerName);
-
-        return getAllowedMoves(playerName).contains(target)
-                && player.getTickets().hasTicket(ticket)
-                && (player instanceof MrX || !isPositionOccupied(target));
     }
 
     public boolean isPositionOccupied(int position) {
