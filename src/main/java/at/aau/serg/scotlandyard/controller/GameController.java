@@ -23,6 +23,23 @@ public class GameController {
         this.gameManager = gameManager;
     }
 
+    @GetMapping("/mrXPosition")
+    public ResponseEntity<?> mrXPosition(
+            @RequestParam String gameId,
+            @RequestParam String name
+    ) {
+        GameState game = gameManager.getGame(gameId);
+
+        if (game == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Game mit ID '" + gameId + "' nicht gefunden.");
+        }
+
+        int mrXPosition = game.getMrXPosition(name);
+        return ResponseEntity.ok(mrXPosition);
+    }
+
+
     @GetMapping("/allowedMoves")
     public ResponseEntity<?> getMoves(
             @RequestParam String gameId,
