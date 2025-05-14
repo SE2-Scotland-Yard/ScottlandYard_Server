@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 public class LobbySocketController {
@@ -18,6 +20,7 @@ public class LobbySocketController {
     private final LobbyManager lobbyManager;
     private final GameManager gameManager;
     private final SimpMessagingTemplate messaging;
+    private static final Logger logger = LoggerFactory.getLogger(LobbySocketController.class);
 
     public LobbySocketController(LobbyManager lobbyManager, GameManager gameManager, SimpMessagingTemplate messaging) {
         this.lobbyManager = lobbyManager;
@@ -62,10 +65,10 @@ public class LobbySocketController {
         if (!detectives.isEmpty()) {
             game.initRoundManager(detectives, mrX); // RoundManager korrekt initialisieren
 
-            //GameUpdate update = GameMapper.mapToGameUpdate(gameId, game.getAllPlayers());
 
-            System.out.println("Sending GameUpdate to /topic/game/" + gameId);
-            //System.out.println("GameUpdate payload: " + new Gson().toJson(update));
+
+            logger.info("Sending GameUpdate to /topic/game/{}" , gameId);
+
             messaging.convertAndSend("/topic/game/" + gameId, GameMapper.mapToGameUpdate(gameId, game.getAllPlayers()));//positionen
         }
 

@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/game")
@@ -18,6 +20,7 @@ public class GameController {
 
     public static final String GAME_NOT_FOUND = "Spiel nicht gefunden";
     private final GameManager gameManager;
+    private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
     public GameController(GameManager gameManager) {
         this.gameManager = gameManager;
@@ -38,7 +41,7 @@ public class GameController {
         List<Map.Entry<Integer, String>> allowedMoves = game.getAllowedMoves(name).stream()
                 .map(entry -> Map.entry(entry.getKey(), entry.getValue().name())) // Ticket zu String konvertieren
                 .toList();
-        System.out.println(allowedMoves);
+        logger.info("Allowed moves: {}",allowedMoves);
         return ResponseEntity.ok(allowedMoves);
     }
     @PostMapping("/move")
