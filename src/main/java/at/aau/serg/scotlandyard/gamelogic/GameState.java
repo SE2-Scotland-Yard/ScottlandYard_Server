@@ -80,12 +80,27 @@ public class GameState {
                 mrX.move(to, ticket, board);
                 mrXHistory.put(currentRound, new MrXMove(to, ticket));
                 currentRound++;
+                roundManager.nextTurn();
+
+            String nextPlayer = getCurrentPlayerName();
+            System.out.println("➡️ currentRound: " + currentRound + ", nextPlayer: " + nextPlayer);
+            messaging.convertAndSend("/topic/game/" + gameId,
+                    GameMapper.mapToGameUpdate(
+                            gameId,
+                            getAllPlayers(),
+                            getCurrentPlayerName()
+                    )
+            );
                 return true;
         }
         if (p != null && p.isValidMove(to, ticket, board)) {
             p.move(to, ticket, board);
             currentRound++;
-            messaging.convertAndSend("/topic/game" + gameId,
+            roundManager.nextTurn();
+
+            String nextPlayer = getCurrentPlayerName();
+            System.out.println("➡️ currentRound: " + currentRound + ", nextPlayer: " + nextPlayer);
+            messaging.convertAndSend("/topic/game/" + gameId,
                     GameMapper.mapToGameUpdate(
                             gameId,
                             getAllPlayers(),
