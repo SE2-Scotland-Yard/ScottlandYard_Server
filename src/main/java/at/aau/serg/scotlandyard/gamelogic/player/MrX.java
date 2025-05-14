@@ -13,8 +13,8 @@ public class MrX extends Player {
 
     private static final Logger logger = LoggerFactory.getLogger(MrX.class);
 
-    public MrX() {
-        super(initializeTickets());
+    public MrX(String name) {
+        super(name, initializeTickets());
     }
 
     private static PlayerTickets initializeTickets() {
