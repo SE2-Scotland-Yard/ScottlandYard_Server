@@ -27,7 +27,7 @@ public class GameController {
     }
 
     @GetMapping("/allowedMoves")
-    public ResponseEntity<?> getMoves(
+    public ResponseEntity<List<Map.Entry<Integer, String>>> getMoves(
             @RequestParam String gameId,
             @RequestParam String name
     ) {
@@ -35,7 +35,7 @@ public class GameController {
 
         if (game == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Game mit ID '" + gameId + "' nicht gefunden.");
+                    .body(List.of(Map.entry(-1, "Game mit ID '" + gameId + "' nicht gefunden.")));
         }
 
         List<Map.Entry<Integer, String>> allowedMoves = game.getAllowedMoves(name).stream()

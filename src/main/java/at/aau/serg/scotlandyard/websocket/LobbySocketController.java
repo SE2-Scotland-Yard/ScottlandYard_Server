@@ -41,6 +41,7 @@ public class LobbySocketController {
             lobby.markStarted();
 
             messaging.convertAndSend("/topic/lobby/" + gameId, LobbyMapper.toLobbyState(lobby));//lobbyUpdate
+            GameState game = initializeGame(gameId, lobby);
 
 
         }
