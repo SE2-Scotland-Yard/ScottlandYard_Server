@@ -30,7 +30,7 @@ class PlayerMovementTest {
 
     @Test
     void testValidMove_ShouldUpdatePositionAndUseTicket() {
-        Detective detective = new Detective();
+        Detective detective = new Detective("Maxmustermann");
         int from = detective.getPosition();
         List<Edge> connections = board.getConnectionsFrom(from);
 
@@ -46,7 +46,7 @@ class PlayerMovementTest {
 
     @Test
     void testInvalidMove_ShouldThrowException() {
-        Detective detective = new Detective();
+        Detective detective = new Detective("Maxmustermann");
         assertThrows(IllegalArgumentException.class, () ->
                 detective.move(999, Ticket.TAXI, board));
     }
@@ -56,7 +56,7 @@ class PlayerMovementTest {
 
         GameState game = new GameState("1234", null);
 
-        Detective det = new Detective();
+        Detective det = new Detective("Maxmustermann");
         game.addPlayer("Alice", det);
 
         int from = det.getPosition();
@@ -77,7 +77,7 @@ class PlayerMovementTest {
     @Test
     void testMovePlayer_InvalidTarget_ShouldReturnFalse() {
         GameState game = new GameState("1234", messagingTemplate);
-        Detective det = new Detective();
+        Detective det = new Detective("Maxmustermann");
         game.addPlayer("Bob", det);
 
         boolean moved = game.movePlayer("Bob", 999, Ticket.TAXI);
@@ -87,7 +87,7 @@ class PlayerMovementTest {
     @Test
     void testVisibleMrXPosition_ShouldReturnPositionOnRevealRound() {
         GameState game = new GameState("1234", messagingTemplate);
-        MrX mrX = new MrX();
+        MrX mrX = new MrX("Maxmustermann");
         game.addPlayer("X", mrX);
 
         moveMrXToRound(game, mrX, 3);
@@ -99,7 +99,7 @@ class PlayerMovementTest {
     @Test
     void testInvisibleMrXPosition_ShouldReturnQuestionMark() {
         GameState game = new GameState("1234", messagingTemplate);
-        MrX mrX = new MrX();
+        MrX mrX = new MrX("Maxmustermann");
         game.addPlayer("X", mrX);
 
         moveMrXToRound(game, mrX, 1);
@@ -112,7 +112,7 @@ class PlayerMovementTest {
     @ValueSource(ints = {1, 2, 4, 5, 6, 7})
     void testMrXShouldBeInvisibleInTheseRounds(int roundsToMove) {
         GameState game = new GameState("1234", messagingTemplate);
-        MrX mrX = new MrX();
+        MrX mrX = new MrX("Maxmustermann");
         game.addPlayer("X", mrX);
 
         moveMrXToRound(game, mrX, roundsToMove);
@@ -126,7 +126,7 @@ class PlayerMovementTest {
     void testMrXDoubleMove_ShouldExecuteTwoMovesAndStoreHistory() {
 
         GameState game = new GameState("1234", null);
-        MrX mrX = new MrX();
+        MrX mrX = new MrX("Maxmustermann");
         game.addPlayer("X", mrX);
 
         int from = mrX.getPosition();

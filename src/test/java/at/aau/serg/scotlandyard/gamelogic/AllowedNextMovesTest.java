@@ -18,7 +18,7 @@ class AllowedNextMovesTest {
     @BeforeEach
     void setUp() {
         board = new Board();
-        detective = new Detective();
+        detective = new Detective("Maxmustermann");
         detective.setPos(128); //Startposition
     }
 
