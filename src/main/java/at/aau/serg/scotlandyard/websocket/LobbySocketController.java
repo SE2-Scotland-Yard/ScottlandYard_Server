@@ -42,7 +42,7 @@ public class LobbySocketController {
             lobby.markStarted();
 
             messaging.convertAndSend(TOPIC_LOBBY_LITERAL + gameId, LobbyMapper.toLobbyState(lobby));//lobbyUpdate
-            GameState game = initializeGame(gameId, lobby);
+
 
 
         }
@@ -68,8 +68,8 @@ public class LobbySocketController {
             game.initRoundManager(detectives, mrX); // RoundManager korrekt initialisieren
 
 
-
-            logger.info("Sending GameUpdate to /topic/game/{}" , gameId);
+            String sanitizedGameId = gameId.replaceAll("[\\n\\r\\t]", "_");
+            logger.info("Sending GameUpdate to /topic/game/{}" , sanitizedGameId);
 
             messaging.convertAndSend("/topic/game/" + gameId, GameMapper.mapToGameUpdate(gameId, game.getAllPlayers()));//positionen
         }
