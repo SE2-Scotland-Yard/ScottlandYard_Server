@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -74,4 +75,24 @@ public class BoardTest {
         assertNotNull(edges);
         assertTrue(edges.isEmpty(), "Es sollten keine Verbindungen für einen ungültigen Knoten vorhanden sein");
     }
+
+    /*
+    @Test
+    void testGetAllNodesContainsKnownNodes() {
+        Set<Integer> allNodes = board.getAllNodes();
+        assertNotNull(allNodes, "Die Knotensammlung sollte nicht null sein");
+        // Typische Scotland Yard-Knoten, passe ggf. an deine board.json an!
+        assertTrue(allNodes.contains(1), "Node 1 sollte enthalten sein");
+        assertTrue(allNodes.contains(32), "Node 32 sollte enthalten sein");
+        assertFalse(allNodes.isEmpty(), "Es sollten Knoten vorhanden sein");
+    }*/
+
+    @Test
+    void testEdgeProperties() {
+        List<Edge> edges = board.getConnectionsFrom(1);
+        assertNotNull(edges);
+        boolean found = edges.stream().anyMatch(e -> e.getTo() > 0 && e.getTicket() != null);
+        assertTrue(found, "Mindestens eine Kante sollte ein Ziel und ein Ticket haben");
+    }
+
 }

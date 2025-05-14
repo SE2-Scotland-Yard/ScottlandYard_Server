@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 
 class RoundManagerTest {
@@ -44,6 +45,18 @@ class RoundManagerTest {
     }
 
     @Test
+    void testGetPlayerPositions() {
+        when(detective1.getPosition()).thenReturn(10);
+        when(detective2.getPosition()).thenReturn(20);
+        //when(mrX.getPosition()).thenReturn(30);
+
+        Map<Player, Integer> positions = roundManager.getPlayerPositions();
+        assertEquals(10, positions.get(detective1));
+        assertEquals(20, positions.get(detective2));
+        //assertEquals(0, positions.get(mrX));    // Defaultwert, solange MrX nicht sichtbar
+    }
+
+    @Test
     void testGetCurrentPlayer(){
         Player player = roundManager.getCurrentPlayer();
         assertEquals(mrX, player);
@@ -51,6 +64,15 @@ class RoundManagerTest {
         player = roundManager.getCurrentPlayer();
         assertEquals(detective1, player);
     }
+
+    @Test
+    void testCurrentRoundIncrement() {
+        assertEquals(1, roundManager.getCurrentRound());
+
+        completeFullTurnCycle();
+        assertEquals(2, roundManager.getCurrentRound());
+    }
+
     @Test
     void testNextTurn(){
         roundManager.nextTurn();
@@ -73,6 +95,20 @@ class RoundManagerTest {
         roundManager.nextTurn();
         roundManager.nextTurn();
         assertFalse(roundManager.isMrXVisible());
+    }
+
+    @Test
+    void testMrXPositionTracking() {
+        when(mrX.getPosition()).thenReturn(100);
+        advanceToRound(3);
+
+        Map<Player, Integer> positions = roundManager.getPlayerPositions();
+        assertEquals(100, positions.get(mrX));
+
+        when(mrX.getPosition()).thenReturn(150);
+        advanceToRound(8);
+        positions = roundManager.getPlayerPositions();
+        assertEquals(150, positions.get(mrX));
     }
 
     @Test
@@ -102,4 +138,22 @@ class RoundManagerTest {
         assertTrue(roundManager.isGameOver());
     }
 
+    @Test
+    void testGetters() {
+        assertEquals(2, roundManager.getDetectives().size());
+        assertEquals(mrX, roundManager.getMrX());
+        assertEquals(3, roundManager.getTurnOrder().size());
+    }
+
+    private void advanceToRound(int targetRound) {
+        while (roundManager.getCurrentRound() < targetRound) {
+            completeFullTurnCycle();
+        }
+    }
+
+    private void completeFullTurnCycle() {
+        for (int i = 0; i < roundManager.getTurnOrder().size(); i++) {
+            roundManager.nextTurn();
+        }
+    }
 }
