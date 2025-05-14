@@ -74,6 +74,17 @@ public class GameState {
                 .toList();
     }
 
+    public Integer getMrXPosition(String name) {
+        int position=0;
+        Player p = players.get(name);
+        if (p == null) {
+            return 0;
+        }
+
+        position = p.getPosition();
+        return position;
+    }
+
     public boolean movePlayer(String name, int to, Ticket ticket) {
         Player p = players.get(name);
         if (p instanceof MrX mrX && mrX.isValidMove(to, ticket, board)) {
