@@ -46,10 +46,12 @@ class GameControllerTest {
     void getMoves_WhenGameNotFound_ReturnsNotFound() {
         when(gameManager.getGame(gameId)).thenReturn(null);
 
-        ResponseEntity<?> response = gameController.getMoves(gameId, playerName);
+        ResponseEntity<List<Map.Entry<Integer, String>>> response = gameController.getMoves(gameId, playerName);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("Game mit ID '" + gameId + "' nicht gefunden.", response.getBody());
+
+        List<Map.Entry<Integer, String>> expected = List.of(Map.entry(-1, "Game mit ID '" + gameId + "' nicht gefunden."));
+        assertEquals(expected, response.getBody());
     }
 
     @Test
