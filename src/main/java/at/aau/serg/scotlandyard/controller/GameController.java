@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 public class GameController {
 
     public static final String GAME_NOT_FOUND = "Spiel nicht gefunden";
+    public static final String MESSAGE = "message";
     private final GameManager gameManager;
     private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
@@ -58,36 +59,36 @@ public class GameController {
         try {
             ticket = Ticket.valueOf(gotTicket);
         } catch (IllegalArgumentException e) {
-            response.put("message", "Ungültiges Ticket: " + gotTicket);
+            response.put(MESSAGE, "Ungültiges Ticket: " + gotTicket);
             return response;
         }
 
         // 2. Spiel validieren
         GameState game = gameManager.getGame(gameId);
         if (game == null) {
-            response.put("message", "Spiel nicht gefunden!");
+            response.put(MESSAGE, "Spiel nicht gefunden!");
             return response;
         }
 
         // 3. Spieler existiert?
         if (!game.getAllPlayers().containsKey(name)) {
-            response.put("message", "Spieler " + name + " existiert nicht!");
+            response.put(MESSAGE, "Spieler " + name + " existiert nicht!");
             return response;
         }
 
         // 4. Zug durchführen
         if (!game.movePlayer(name, to, ticket)) {
-            response.put("message", "Ungültiger Zug!");
+            response.put(MESSAGE, "Ungültiger Zug!");
             return response;
         }
 
         // 5. Gewinner prüfen
         if (game.getWinner() != GameState.Winner.NONE) {
-            response.put("message", getWinner(gameId));
+            response.put(MESSAGE, getWinner(gameId));
             return response;
         }
 
-        response.put("message", "Spieler " + name + " bewegt sich zu " + to + " in Spiel " + gameId);
+        response.put(MESSAGE, "Spieler " + name + " bewegt sich zu " + to + " in Spiel " + gameId);
         return response;
     }
 

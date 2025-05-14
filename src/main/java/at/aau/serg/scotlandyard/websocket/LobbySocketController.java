@@ -21,6 +21,7 @@ public class LobbySocketController {
     private final GameManager gameManager;
     private final SimpMessagingTemplate messaging;
     private static final Logger logger = LoggerFactory.getLogger(LobbySocketController.class);
+    private static final String TOPIC_LOBBY_LITERAL = "/topic/lobby/";
 
     public LobbySocketController(LobbyManager lobbyManager, GameManager gameManager, SimpMessagingTemplate messaging) {
         this.lobbyManager = lobbyManager;
@@ -35,12 +36,12 @@ public class LobbySocketController {
         if (lobby == null) return;
 
         lobby.markReady(msg.getPlayerId());
-        messaging.convertAndSend("/topic/lobby/" + gameId, LobbyMapper.toLobbyState(lobby));
+        messaging.convertAndSend(TOPIC_LOBBY_LITERAL + gameId, LobbyMapper.toLobbyState(lobby));
 
         if (lobby.allReady() && lobby.hasEnoughPlayers() && !lobby.isStarted()) {
             lobby.markStarted();
 
-            messaging.convertAndSend("/topic/lobby/" + gameId, LobbyMapper.toLobbyState(lobby));//lobbyUpdate
+            messaging.convertAndSend(TOPIC_LOBBY_LITERAL + gameId, LobbyMapper.toLobbyState(lobby));//lobbyUpdate
             GameState game = initializeGame(gameId, lobby);
 
 
@@ -81,7 +82,7 @@ public class LobbySocketController {
         Lobby lobby = lobbyManager.getLobby(msg.getGameId());
         if (lobby != null) {
             lobby.selectRole(msg.getPlayerId(), msg.getRole());
-            messaging.convertAndSend("/topic/lobby/" + msg.getGameId(), LobbyMapper.toLobbyState(lobby));
+            messaging.convertAndSend(TOPIC_LOBBY_LITERAL + msg.getGameId(), LobbyMapper.toLobbyState(lobby));
         }
     }
 
