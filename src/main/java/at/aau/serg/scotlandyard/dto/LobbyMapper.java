@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class LobbyMapper {
 
-    private LobbyMapper() {
+    protected LobbyMapper() {
         throw new UnsupportedOperationException("LobbyMapper ist eine Hilfsklasse und darf nicht instanziiert werden.");
     }
 
