@@ -76,16 +76,6 @@ class BoardTest {
         assertTrue(edges.isEmpty(), "Es sollten keine Verbindungen für einen ungültigen Knoten vorhanden sein");
     }
 
-    /*
-    @Test
-    void testGetAllNodesContainsKnownNodes() {
-        Set<Integer> allNodes = board.getAllNodes();
-        assertNotNull(allNodes, "Die Knotensammlung sollte nicht null sein");
-        // Typische Scotland Yard-Knoten, passe ggf. an deine board.json an!
-        assertTrue(allNodes.contains(1), "Node 1 sollte enthalten sein");
-        assertTrue(allNodes.contains(32), "Node 32 sollte enthalten sein");
-        assertFalse(allNodes.isEmpty(), "Es sollten Knoten vorhanden sein");
-    }*/
 
     @Test
     void testEdgeProperties() {

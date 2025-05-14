@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.ArrayList;
 
 
+
 public class GameState {
     private final SimpMessagingTemplate messaging;
     private final String gameId;
@@ -90,7 +91,7 @@ public class GameState {
                 roundManager.nextTurn();
 
             String nextPlayer = getCurrentPlayerName();
-            System.out.println("➡️ currentRound: " + currentRound + ", nextPlayer: " + nextPlayer);
+            logger.info("➡️ currentRound: {}, nextPlayer: {}", currentRound, nextPlayer);
             messaging.convertAndSend("/topic/game/" + gameId,
                     GameMapper.mapToGameUpdate(
                             gameId,
@@ -106,7 +107,7 @@ public class GameState {
             roundManager.nextTurn();
 
             String nextPlayer = getCurrentPlayerName();
-            System.out.println("➡️ currentRound: " + currentRound + ", nextPlayer: " + nextPlayer);
+            logger.info("➡️ currentRound: {}, nextPlayer: {}", currentRound, nextPlayer);
             messaging.convertAndSend("/topic/game/" + gameId,
                     GameMapper.mapToGameUpdate(
                             gameId,

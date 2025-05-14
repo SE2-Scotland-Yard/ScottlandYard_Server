@@ -9,6 +9,8 @@ import at.aau.serg.scotlandyard.gamelogic.player.Player;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -18,6 +20,7 @@ public class LobbySocketController {
     private final LobbyManager lobbyManager;
     private final GameManager gameManager;
     private final SimpMessagingTemplate messaging;
+    private static final Logger logger = LoggerFactory.getLogger(LobbySocketController.class);
 
     public LobbySocketController(LobbyManager lobbyManager, GameManager gameManager, SimpMessagingTemplate messaging) {
         this.lobbyManager = lobbyManager;
@@ -62,11 +65,10 @@ public class LobbySocketController {
         if (!detectives.isEmpty()) {
             game.initRoundManager(detectives, mrX); // RoundManager korrekt initialisieren
 
-            //GameUpdate update = GameMapper.mapToGameUpdate(gameId, game.getAllPlayers());
 
-            System.out.println("Sending GameUpdate to /topic/game/" + gameId);
-            //System.out.println("GameUpdate payload: " + new Gson().toJson(update));
-            System.out.println("Aktueller Spieler im Mapper: " + game.getCurrentPlayerName());
+
+            logger.info("Sending GameUpdate to /topic/game/{}", gameId);
+            logger.info("Aktueller Spieler im Mapper: {}", game.getCurrentPlayerName());
             messaging.convertAndSend("/topic/game/" + gameId, GameMapper.mapToGameUpdate(gameId, game.getAllPlayers(), game.getCurrentPlayerName()));//positionen
 
         }
@@ -100,7 +102,7 @@ public class LobbySocketController {
 
 
 
-            System.out.println("→ Eigene Position an MrX gesendet: " + position);
+            logger.info("→ Eigene Position an MrX gesendet: {}", position);
         }
     }
 
@@ -110,7 +112,7 @@ public class LobbySocketController {
     @MessageMapping("/lobby/game/update")
     public void gameUpdate(String gameId, GameState game) {
 
-       // messaging.convertAndSend("/topic/game/update" + gameId, GameMapper.mapToGameUpdate(gameId, game.getAllPlayers()));
+
     }
 
 

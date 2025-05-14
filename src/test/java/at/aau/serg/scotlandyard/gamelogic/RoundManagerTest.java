@@ -48,12 +48,12 @@ class RoundManagerTest {
     void testGetPlayerPositions() {
         when(detective1.getPosition()).thenReturn(10);
         when(detective2.getPosition()).thenReturn(20);
-        //when(mrX.getPosition()).thenReturn(30);
+
 
         Map<Player, Integer> positions = roundManager.getPlayerPositions();
         assertEquals(10, positions.get(detective1));
         assertEquals(20, positions.get(detective2));
-        //assertEquals(0, positions.get(mrX));    // Defaultwert, solange MrX nicht sichtbar
+
     }
 
     @Test
