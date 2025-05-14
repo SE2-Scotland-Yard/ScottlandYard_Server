@@ -1,6 +1,6 @@
 package at.aau.serg.scotlandyard.dto;
 
-import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
+
 
 import java.util.List;
 import java.util.Map;
@@ -14,9 +14,7 @@ public class LobbyState {
     private boolean isStarted;
     private int maxPlayers;
     private int currentPlayerCount;
-    private int position;
 
-    private Map<String, Integer> playerPositions; // Spielername → Positionen
 
     public LobbyState(String gameId,
                       List<String> players,
