@@ -8,13 +8,19 @@ import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
 import java.util.*;
 
 public abstract class Player {
+    private final String name;
    protected final PlayerTickets tickets;
    private int pos;
 
 
-    protected Player(PlayerTickets tickets) {
+    protected Player(String name, PlayerTickets tickets) {
+        this.name = name;
         this.tickets = tickets;
         this.pos = new Random().nextInt(199)+1;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public boolean isValidMove(int to, Ticket ticket, Board board) {
