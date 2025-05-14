@@ -5,13 +5,14 @@ import at.aau.serg.scotlandyard.gamelogic.*;
 import at.aau.serg.scotlandyard.gamelogic.player.Detective;
 import at.aau.serg.scotlandyard.gamelogic.player.MrX;
 import at.aau.serg.scotlandyard.gamelogic.player.Player;
-import com.google.gson.Gson;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 public class LobbySocketController {
@@ -19,6 +20,8 @@ public class LobbySocketController {
     private final LobbyManager lobbyManager;
     private final GameManager gameManager;
     private final SimpMessagingTemplate messaging;
+    private static final Logger logger = LoggerFactory.getLogger(LobbySocketController.class);
+    private static final String TOPIC_LOBBY_LITERAL = "/topic/lobby/";
 
     public LobbySocketController(LobbyManager lobbyManager, GameManager gameManager, SimpMessagingTemplate messaging) {
         this.lobbyManager = lobbyManager;
@@ -33,13 +36,14 @@ public class LobbySocketController {
         if (lobby == null) return;
 
         lobby.markReady(msg.getPlayerId());
-        messaging.convertAndSend("/topic/lobby/" + gameId, LobbyMapper.toLobbyState(lobby));
+        messaging.convertAndSend(TOPIC_LOBBY_LITERAL + gameId, LobbyMapper.toLobbyState(lobby));
 
         if (lobby.allReady() && lobby.hasEnoughPlayers() && !lobby.isStarted()) {
             lobby.markStarted();
 
-            messaging.convertAndSend("/topic/lobby/" + gameId, LobbyMapper.toLobbyState(lobby));//lobbyUpdate
-            GameState game = initializeGame(gameId, lobby); // Spiel initialisieren
+            messaging.convertAndSend(TOPIC_LOBBY_LITERAL + gameId, LobbyMapper.toLobbyState(lobby));//lobbyUpdate
+
+
 
         }
     }
@@ -63,10 +67,10 @@ public class LobbySocketController {
         if (!detectives.isEmpty()) {
             game.initRoundManager(detectives, mrX); // RoundManager korrekt initialisieren
 
-            //GameUpdate update = GameMapper.mapToGameUpdate(gameId, game.getAllPlayers());
 
-            System.out.println("Sending GameUpdate to /topic/game/" + gameId);
-            //System.out.println("GameUpdate payload: " + new Gson().toJson(update));
+            String sanitizedGameId = gameId.replaceAll("[\\n\\r\\t]", "_");
+            logger.info("Sending GameUpdate to /topic/game/{}" , sanitizedGameId);
+
             messaging.convertAndSend("/topic/game/" + gameId, GameMapper.mapToGameUpdate(gameId, game.getAllPlayers()));//positionen
         }
 
@@ -78,7 +82,7 @@ public class LobbySocketController {
         Lobby lobby = lobbyManager.getLobby(msg.getGameId());
         if (lobby != null) {
             lobby.selectRole(msg.getPlayerId(), msg.getRole());
-            messaging.convertAndSend("/topic/lobby/" + msg.getGameId(), LobbyMapper.toLobbyState(lobby));
+            messaging.convertAndSend(TOPIC_LOBBY_LITERAL + msg.getGameId(), LobbyMapper.toLobbyState(lobby));
         }
     }
 

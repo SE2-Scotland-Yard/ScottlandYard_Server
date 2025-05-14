@@ -1,14 +1,12 @@
 package at.aau.serg.scotlandyard.dto;
 
-import at.aau.serg.scotlandyard.gamelogic.player.Player;
 
-import java.util.List;
 import java.util.Map;
 
 public class GameUpdate {
     private String gameId;
     private Map<String, Integer> playerPositions;
-    private String currentPlayer;
+
 
     public GameUpdate(String gameId, Map<String, Integer> playerPositions) {
         this.gameId = gameId;
