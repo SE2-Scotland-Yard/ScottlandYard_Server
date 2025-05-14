@@ -33,9 +33,9 @@ class GameControllerTest {
     @InjectMocks
     private GameController gameController;
 
-    private final String GAME_ID = "testGame";
-    private final String PLAYER_NAME = "testPlayer";
-    private final int POSITION = 42;
+    private final String gameId = "testGame";
+    private final String playerName = "testPlayer";
+    private final int position = 42;
 
     @BeforeEach
     void setUp() {
@@ -44,12 +44,12 @@ class GameControllerTest {
 
     @Test
     void getMoves_WhenGameNotFound_ReturnsNotFound() {
-        when(gameManager.getGame(GAME_ID)).thenReturn(null);
+        when(gameManager.getGame(gameId)).thenReturn(null);
 
-        ResponseEntity<?> response = gameController.getMoves(GAME_ID, PLAYER_NAME);
+        ResponseEntity<?> response = gameController.getMoves(gameId, playerName);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("Game mit ID '" + GAME_ID + "' nicht gefunden.", response.getBody());
+        assertEquals("Game mit ID '" + gameId + "' nicht gefunden.", response.getBody());
     }
 
     @Test
@@ -60,10 +60,10 @@ class GameControllerTest {
         moves.put(3, Ticket.UNDERGROUND);
         List<Entry<Integer, Ticket>> expectedMoves = new ArrayList<>(moves.entrySet());
 
-        when(gameManager.getGame(GAME_ID)).thenReturn(gameState);
-        when(gameState.getAllowedMoves(PLAYER_NAME)).thenReturn(expectedMoves);
+        when(gameManager.getGame(gameId)).thenReturn(gameState);
+        when(gameState.getAllowedMoves(playerName)).thenReturn(expectedMoves);
 
-        ResponseEntity<?> response = gameController.getMoves(GAME_ID, PLAYER_NAME);
+        ResponseEntity<?> response = gameController.getMoves(gameId, playerName);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertTrue(response.getBody() instanceof List);
@@ -78,40 +78,40 @@ class GameControllerTest {
 
     @Test
     void move_WhenInvalidTicket_ReturnsErrorMessage() {
-        Map<String, String> result = gameController.move(GAME_ID, PLAYER_NAME, POSITION, "INVALID_TICKET");
+        Map<String, String> result = gameController.move(gameId, playerName, position, "INVALID_TICKET");
 
         assertEquals("Ungültiges Ticket: INVALID_TICKET", result.get("message"));
     }
 
     @Test
     void move_WhenGameNotFound_ReturnsGameNotFound() {
-        when(gameManager.getGame(GAME_ID)).thenReturn(null);
+        when(gameManager.getGame(gameId)).thenReturn(null);
 
-        Map<String, String> result = gameController.move(GAME_ID, PLAYER_NAME, POSITION, "TAXI");
+        Map<String, String> result = gameController.move(gameId, playerName, position, "TAXI");
 
         assertEquals("Spiel nicht gefunden!", result.get("message"));
     }
 
     @Test
     void move_WhenPlayerNotFound_ReturnsErrorMessage() {
-        when(gameManager.getGame(GAME_ID)).thenReturn(gameState);
+        when(gameManager.getGame(gameId)).thenReturn(gameState);
         when(gameState.getAllPlayers()).thenReturn(new HashMap<>());
 
-        Map<String, String> result = gameController.move(GAME_ID, PLAYER_NAME, POSITION, "TAXI");
+        Map<String, String> result = gameController.move(gameId, playerName, position, "TAXI");
 
-        assertEquals("Spieler " + PLAYER_NAME + " existiert nicht!", result.get("message"));
+        assertEquals("Spieler " + playerName + " existiert nicht!", result.get("message"));
     }
 
     @Test
     void move_WhenInvalidMove_ReturnsErrorMessage() {
         Map<String, Player> players = new HashMap<>();
-        players.put(PLAYER_NAME, player);
+        players.put(playerName, player);
 
-        when(gameManager.getGame(GAME_ID)).thenReturn(gameState);
+        when(gameManager.getGame(gameId)).thenReturn(gameState);
         when(gameState.getAllPlayers()).thenReturn(players);
-        when(gameState.movePlayer(PLAYER_NAME, POSITION, Ticket.TAXI)).thenReturn(false);
+        when(gameState.movePlayer(playerName, position, Ticket.TAXI)).thenReturn(false);
 
-        Map<String, String> result = gameController.move(GAME_ID, PLAYER_NAME, POSITION, "TAXI");
+        Map<String, String> result = gameController.move(gameId, playerName, position, "TAXI");
 
         assertEquals("Ungültiger Zug!", result.get("message"));
     }
@@ -119,67 +119,67 @@ class GameControllerTest {
     @Test
     void move_WhenValidMove_ReturnsSuccessMessage() {
         Map<String, Player> players = new HashMap<>();
-        players.put(PLAYER_NAME, player);
+        players.put(playerName, player);
 
-        when(gameManager.getGame(GAME_ID)).thenReturn(gameState);
+        when(gameManager.getGame(gameId)).thenReturn(gameState);
         when(gameState.getAllPlayers()).thenReturn(players);
-        when(gameState.movePlayer(PLAYER_NAME, POSITION, Ticket.TAXI)).thenReturn(true);
+        when(gameState.movePlayer(playerName, position, Ticket.TAXI)).thenReturn(true);
         when(gameState.getWinner()).thenReturn(GameState.Winner.NONE);
 
-        Map<String, String> result = gameController.move(GAME_ID, PLAYER_NAME, POSITION, "TAXI");
+        Map<String, String> result = gameController.move(gameId, playerName, position, "TAXI");
 
-        assertEquals("Spieler " + PLAYER_NAME + " bewegt sich zu " + POSITION + " in Spiel " + GAME_ID, result.get("message"));
+        assertEquals("Spieler " + playerName + " bewegt sich zu " + position + " in Spiel " + gameId, result.get("message"));
     }
 
     @Test
     void move_WhenMoveWinsGame_ReturnsWinnerMessage() {
         Map<String, Player> players = new HashMap<>();
-        players.put(PLAYER_NAME, player);
+        players.put(playerName, player);
 
-        when(gameManager.getGame(GAME_ID)).thenReturn(gameState);
+        when(gameManager.getGame(gameId)).thenReturn(gameState);
         when(gameState.getAllPlayers()).thenReturn(players);
-        when(gameState.movePlayer(PLAYER_NAME, POSITION, Ticket.TAXI)).thenReturn(true);
+        when(gameState.movePlayer(playerName, position, Ticket.TAXI)).thenReturn(true);
         when(gameState.getWinner()).thenReturn(GameState.Winner.MR_X);
 
-        Map<String, String> result = gameController.move(GAME_ID, PLAYER_NAME, POSITION, "TAXI");
+        Map<String, String> result = gameController.move(gameId, playerName, position, "TAXI");
 
         assertEquals("Mr.X hat gewonnen!", result.get("message"));
     }
 
     @Test
     void moveDouble_WhenGameNotFound_ReturnsGameNotFound() {
-        when(gameManager.getGame(GAME_ID)).thenReturn(null);
+        when(gameManager.getGame(gameId)).thenReturn(null);
 
-        String result = gameController.moveDouble(GAME_ID, PLAYER_NAME, POSITION, Ticket.TAXI, POSITION + 1, Ticket.BUS);
+        String result = gameController.moveDouble(gameId, playerName, position, Ticket.TAXI, position + 1, Ticket.BUS);
 
         assertEquals(GameController.GAME_NOT_FOUND, result);
     }
 
     @Test
     void moveDouble_WhenInvalidMove_ReturnsErrorMessage() {
-        when(gameManager.getGame(GAME_ID)).thenReturn(gameState);
-        when(gameState.moveMrXDouble(PLAYER_NAME, POSITION, Ticket.TAXI, POSITION + 1, Ticket.BUS)).thenReturn(false);
+        when(gameManager.getGame(gameId)).thenReturn(gameState);
+        when(gameState.moveMrXDouble(playerName, position, Ticket.TAXI, position + 1, Ticket.BUS)).thenReturn(false);
 
-        String result = gameController.moveDouble(GAME_ID, PLAYER_NAME, POSITION, Ticket.TAXI, POSITION + 1, Ticket.BUS);
+        String result = gameController.moveDouble(gameId, playerName, position, Ticket.TAXI, position + 1, Ticket.BUS);
 
         assertEquals("Ungültiger Doppelzug!", result);
     }
 
     @Test
     void moveDouble_WhenValidMove_ReturnsSuccessMessage() {
-        when(gameManager.getGame(GAME_ID)).thenReturn(gameState);
-        when(gameState.moveMrXDouble(PLAYER_NAME, POSITION, Ticket.TAXI, POSITION + 1, Ticket.BUS)).thenReturn(true);
+        when(gameManager.getGame(gameId)).thenReturn(gameState);
+        when(gameState.moveMrXDouble(playerName, position, Ticket.TAXI, position + 1, Ticket.BUS)).thenReturn(true);
 
-        String result = gameController.moveDouble(GAME_ID, PLAYER_NAME, POSITION, Ticket.TAXI, POSITION + 1, Ticket.BUS);
+        String result = gameController.moveDouble(gameId, playerName, position, Ticket.TAXI, position + 1, Ticket.BUS);
 
-        assertEquals("MrX machte einen Doppelzug: " + POSITION + " → " + (POSITION + 1), result);
+        assertEquals("MrX machte einen Doppelzug: " + position + " → " + (position + 1), result);
     }
 
     @Test
     void getMrXPosition_WhenGameNotFound_ReturnsGameNotFound() {
-        when(gameManager.getGame(GAME_ID)).thenReturn(null);
+        when(gameManager.getGame(gameId)).thenReturn(null);
 
-        String result = gameController.getMrXPosition(GAME_ID);
+        String result = gameController.getMrXPosition(gameId);
 
         assertEquals(GameController.GAME_NOT_FOUND, result);
     }
@@ -187,19 +187,19 @@ class GameControllerTest {
     @Test
     void getMrXPosition_WhenGameExists_ReturnsPosition() {
         String expectedPosition = "123";
-        when(gameManager.getGame(GAME_ID)).thenReturn(gameState);
+        when(gameManager.getGame(gameId)).thenReturn(gameState);
         when(gameState.getVisibleMrXPosition()).thenReturn(expectedPosition);
 
-        String result = gameController.getMrXPosition(GAME_ID);
+        String result = gameController.getMrXPosition(gameId);
 
         assertEquals(expectedPosition, result);
     }
 
     @Test
     void getMrXHistory_WhenGameNotFound_ReturnsGameNotFound() {
-        when(gameManager.getGame(GAME_ID)).thenReturn(null);
+        when(gameManager.getGame(gameId)).thenReturn(null);
 
-        List<String> result = gameController.getMrXHistory(GAME_ID);
+        List<String> result = gameController.getMrXHistory(gameId);
 
         assertEquals(List.of(GameController.GAME_NOT_FOUND), result);
     }
@@ -207,10 +207,10 @@ class GameControllerTest {
     @Test
     void getMrXHistory_WhenGameExists_ReturnsHistory() {
         List<String> expectedHistory = List.of("Move 1", "Move 2");
-        when(gameManager.getGame(GAME_ID)).thenReturn(gameState);
+        when(gameManager.getGame(gameId)).thenReturn(gameState);
         when(gameState.getMrXMoveHistory()).thenReturn(expectedHistory);
 
-        List<String> result = gameController.getMrXHistory(GAME_ID);
+        List<String> result = gameController.getMrXHistory(gameId);
 
         assertEquals(expectedHistory, result);
     }
@@ -243,39 +243,39 @@ class GameControllerTest {
 
     @Test
     void getWinner_WhenGameNotFound_ReturnsGameNotFound() {
-        when(gameManager.getGame(GAME_ID)).thenReturn(null);
+        when(gameManager.getGame(gameId)).thenReturn(null);
 
-        String result = gameController.getWinner(GAME_ID);
+        String result = gameController.getWinner(gameId);
 
         assertEquals(GameController.GAME_NOT_FOUND, result);
     }
 
     @Test
     void getWinner_WhenMrXWins_ReturnsMrXWonMessage() {
-        when(gameManager.getGame(GAME_ID)).thenReturn(gameState);
+        when(gameManager.getGame(gameId)).thenReturn(gameState);
         when(gameState.getWinner()).thenReturn(GameState.Winner.MR_X);
 
-        String result = gameController.getWinner(GAME_ID);
+        String result = gameController.getWinner(gameId);
 
         assertEquals("Mr.X hat gewonnen!", result);
     }
 
     @Test
     void getWinner_WhenDetectivesWin_ReturnsDetectivesWonMessage() {
-        when(gameManager.getGame(GAME_ID)).thenReturn(gameState);
+        when(gameManager.getGame(gameId)).thenReturn(gameState);
         when(gameState.getWinner()).thenReturn(GameState.Winner.DETECTIVE);
 
-        String result = gameController.getWinner(GAME_ID);
+        String result = gameController.getWinner(gameId);
 
         assertEquals("Detektive haben gewonnen!", result);
     }
 
     @Test
     void getWinner_WhenGameStillRunning_ReturnsGameStillRunningMessage() {
-        when(gameManager.getGame(GAME_ID)).thenReturn(gameState);
+        when(gameManager.getGame(gameId)).thenReturn(gameState);
         when(gameState.getWinner()).thenReturn(GameState.Winner.NONE);
 
-        String result = gameController.getWinner(GAME_ID);
+        String result = gameController.getWinner(gameId);
 
         assertEquals("Spiel läuft noch.", result);
     }

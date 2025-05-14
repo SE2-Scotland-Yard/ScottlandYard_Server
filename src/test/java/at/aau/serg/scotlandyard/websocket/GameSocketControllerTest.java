@@ -13,7 +13,7 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
-public class GameSocketControllerTest {
+class GameSocketControllerTest {
 
     private GameManager gameManager;
     private SimpMessagingTemplate messaging;

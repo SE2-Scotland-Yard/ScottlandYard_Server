@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class UserRepositoryJsonTest {
+class UserRepositoryJsonTest {
 
     private static final String PROD_FILE = "users.json";
     private static final String TEST_FILE = "users_test.json";

@@ -2,18 +2,17 @@ package at.aau.serg.scotlandyard.websocket;
 
 import at.aau.serg.scotlandyard.dto.*;
 import at.aau.serg.scotlandyard.gamelogic.*;
-import at.aau.serg.scotlandyard.gamelogic.player.MrX;
-import at.aau.serg.scotlandyard.gamelogic.player.Player;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import java.util.*;
+
 
 import static org.mockito.Mockito.*;
 
-public class LobbySocketControllerTest {
+class LobbySocketControllerTest {
 
     private LobbyManager lobbyManager;
     private GameManager gameManager;

@@ -3,7 +3,7 @@ package at.aau.serg.scotlandyard.dto;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-public class JoinResponseTest {
+class JoinResponseTest {
 
     @Test
     void testConstructorAndGetter() {
