@@ -35,6 +35,7 @@ class GameStateTest {
         detective = mock(Detective.class);
         gameState.addPlayer("MrX", mrX);
         gameState.addPlayer("Detective", detective);
+        gameState.initRoundManager(List.of(detective), mrX);
     }
 
     @Test
