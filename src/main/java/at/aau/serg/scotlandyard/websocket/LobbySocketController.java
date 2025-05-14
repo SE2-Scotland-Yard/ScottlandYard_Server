@@ -10,8 +10,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Controller
 public class LobbySocketController {
@@ -50,7 +49,7 @@ public class LobbySocketController {
 
         for (String playerName : lobby.getPlayers()) {
             Role role = lobby.getSelectedRole(playerName);
-            Player player = (role == Role.MRX) ? new MrX() : new Detective();
+            Player player = (role == Role.MRX) ? new MrX(playerName) : new Detective(playerName);
             game.addPlayer(playerName, player);
 
             if (role == Role.MRX) {
@@ -67,7 +66,9 @@ public class LobbySocketController {
 
             System.out.println("Sending GameUpdate to /topic/game/" + gameId);
             //System.out.println("GameUpdate payload: " + new Gson().toJson(update));
-            messaging.convertAndSend("/topic/game/" + gameId, GameMapper.mapToGameUpdate(gameId, game.getAllPlayers()));//positionen
+            System.out.println("Aktueller Spieler im Mapper: " + game.getCurrentPlayerName());
+            messaging.convertAndSend("/topic/game/" + gameId, GameMapper.mapToGameUpdate(gameId, game.getAllPlayers(), game.getCurrentPlayerName()));//positionen
+
         }
 
         return game;
@@ -82,11 +83,34 @@ public class LobbySocketController {
         }
     }
 
+    @MessageMapping("/game/requestOwnPosition")
+    public void handleOwnPositionRequest(Map<String, String> request) {
+        String gameId = request.get("gameId");
+        String playerId = request.get("playerId");
+
+        GameState game = gameManager.getGame(gameId);
+        if (game == null) return;
+
+        Player player = game.getAllPlayers().get(playerId);
+        if (player != null) {
+            int position = player.getPosition();
+
+            messaging.convertAndSend("/topic/ownPosition/" + playerId, Map.of("position", position));
+
+
+
+
+            System.out.println("→ Eigene Position an MrX gesendet: " + position);
+        }
+    }
+
+
+
 
     @MessageMapping("/lobby/game/update")
     public void gameUpdate(String gameId, GameState game) {
 
-        messaging.convertAndSend("/topic/game/update" + gameId, GameMapper.mapToGameUpdate(gameId, game.getAllPlayers()));
+       // messaging.convertAndSend("/topic/game/update" + gameId, GameMapper.mapToGameUpdate(gameId, game.getAllPlayers()));
     }
 
 

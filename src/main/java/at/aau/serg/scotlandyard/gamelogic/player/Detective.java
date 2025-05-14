@@ -8,8 +8,8 @@ import java.util.Map;
 
 public class Detective extends Player {
 
-    public Detective() {
-        super(initializeTickets());
+    public Detective(String name) {
+        super(name,initializeTickets());
 
     }
 

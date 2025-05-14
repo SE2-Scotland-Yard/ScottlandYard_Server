@@ -80,13 +80,36 @@ public class GameState {
                 mrX.move(to, ticket, board);
                 mrXHistory.put(currentRound, new MrXMove(to, ticket));
                 currentRound++;
+                roundManager.nextTurn();
+
+            String nextPlayer = getCurrentPlayerName();
+            System.out.println("➡️ currentRound: " + currentRound + ", nextPlayer: " + nextPlayer);
+            messaging.convertAndSend("/topic/game/" + gameId,
+                    GameMapper.mapToGameUpdate(
+                            gameId,
+                            getAllPlayers(),
+                            getCurrentPlayerName()
+                    )
+            );
                 return true;
         }
         if (p != null && p.isValidMove(to, ticket, board)) {
             p.move(to, ticket, board);
             currentRound++;
+            roundManager.nextTurn();
+
+            String nextPlayer = getCurrentPlayerName();
+            System.out.println("➡️ currentRound: " + currentRound + ", nextPlayer: " + nextPlayer);
+            messaging.convertAndSend("/topic/game/" + gameId,
+                    GameMapper.mapToGameUpdate(
+                            gameId,
+                            getAllPlayers(),
+                            getCurrentPlayerName()
+                    )
+            );
             return true;
         }
+
         if (p instanceof Detective) {
             for (Player other : players.values()) {
                 if (other != p && other instanceof Detective && other.getPosition() == to) {
@@ -94,7 +117,7 @@ public class GameState {
                 }
             }
         }
-        messaging.convertAndSend("/topic/game"+gameId, GameMapper.mapToGameUpdate(gameId, getAllPlayers()));
+
         return false;
     }
 
@@ -106,6 +129,15 @@ public class GameState {
     public Map<String, Player> getAllPlayers() {
         return players;
     }
+
+    public String getCurrentPlayerName() {
+        if (roundManager == null || roundManager.getCurrentPlayer() == null) {
+            return null;
+        }
+        return roundManager.getCurrentPlayer().getName();
+    }
+
+
 
     //Winning Condition
     public enum Winner{ MR_X, DETECTIVE, NONE}
