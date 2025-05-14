@@ -53,25 +53,27 @@ class PlayerMovementTest {
 
     @Test
     void testMovePlayer_ValidMove_ShouldReturnTrue() {
+        GameState game = new GameState("1234", messagingTemplate);
+        Detective detective = new Detective("Alice");
+        game.addPlayer("Alice", detective);
 
-        GameState game = new GameState("1234", null);
+        int from = detective.getPosition();
+        List<Edge> possibleEdges = game.getBoard().getConnectionsFrom(from);
 
-        Detective det = new Detective("Maxmustermann");
-        game.addPlayer("Alice", det);
-
-        int from = det.getPosition();
-        Edge validEdge = game.getBoard().getConnectionsFrom(from).stream()
-                .filter(e -> det.getTickets().hasTicket(e.getTicket()))
+        Edge validEdge = possibleEdges.stream()
+                .filter(edge -> detective.getTickets().hasTicket(edge.getTicket()))
                 .findFirst()
-                .orElseThrow();
+                .orElseThrow(() -> new AssertionError("Keine gültige Bewegung für den Detektiv gefunden."));
 
         int to = validEdge.getTo();
         Ticket ticket = validEdge.getTicket();
 
         boolean moved = game.movePlayer("Alice", to, ticket);
 
-        assertTrue(moved);
-        assertEquals(to, det.getPosition());
+        assertTrue(moved, "Ein gültiger Zug sollte erfolgreich sein.");
+        assertEquals(to, detective.getPosition(), "Die Position des Detektivs sollte aktualisiert worden sein.");
+        assertEquals(9, detective.getTickets().getTicketCount(ticket), "Das Ticket sollte verwendet worden sein.");
+
     }
 
     @Test
