@@ -5,7 +5,6 @@ import at.aau.serg.scotlandyard.gamelogic.*;
 import at.aau.serg.scotlandyard.gamelogic.player.Detective;
 import at.aau.serg.scotlandyard.gamelogic.player.MrX;
 import at.aau.serg.scotlandyard.gamelogic.player.Player;
-import com.google.gson.Gson;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
@@ -39,7 +38,7 @@ public class LobbySocketController {
             lobby.markStarted();
 
             messaging.convertAndSend("/topic/lobby/" + gameId, LobbyMapper.toLobbyState(lobby));//lobbyUpdate
-            GameState game = initializeGame(gameId, lobby); // Spiel initialisieren
+
 
         }
     }
