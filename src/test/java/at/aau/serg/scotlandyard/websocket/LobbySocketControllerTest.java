@@ -64,7 +64,7 @@ class LobbySocketControllerTest {
             controller.handleReady(msg);
 
             verify(lobby).markReady("Bob");
-            verify(messaging).convertAndSend(eq("/topic/lobby/game2"), eq(mockLobbyState));
+            verify(messaging).convertAndSend("/topic/lobby/game2", mockLobbyState);
         }
     }
 
@@ -138,7 +138,7 @@ class LobbySocketControllerTest {
             controller.selectRole(msg);
 
             verify(lobby).selectRole("Bob", Role.DETECTIVE);
-            verify(messaging).convertAndSend(eq("/topic/lobby/game4"), eq(mockLobbyState));
+            verify(messaging).convertAndSend("/topic/lobby/game4", mockLobbyState);
         }
     }
 
