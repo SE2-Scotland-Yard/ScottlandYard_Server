@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class GameMapper {
 
-    public static GameUpdate mapToGameUpdate(String gameId, Map<String, Player> playerMap) {
+    public static GameUpdate mapToGameUpdate(String gameId, Map<String, Player> playerMap, String currentPlayer) {
         Map<String, Integer> playerPositions = new HashMap<>();
 
         for (Map.Entry<String, Player> entry : playerMap.entrySet()) {
@@ -19,7 +19,7 @@ public class GameMapper {
             }
         }
 
-        return new GameUpdate(gameId, playerPositions);
+        return new GameUpdate(gameId, playerPositions, currentPlayer);
     }
 }
 
