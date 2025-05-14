@@ -34,8 +34,8 @@ class LobbyControllerTest {
     @InjectMocks
     private LobbyController lobbyController;
 
-    private final String gameId = UUID.randomUUID().toString();
-    private final String playerName = "testPlayer";
+    private final String GAME_ID = UUID.randomUUID().toString();
+    private final String PLAYER_NAME = "testPlayer";
 
     @BeforeEach
     void setUp() {
@@ -45,33 +45,33 @@ class LobbyControllerTest {
     @Test
     void createLobby_ShouldCreateLobbyAndReturnState() {
         when(lobbyManager.createLobby(true)).thenReturn(lobby);
-        when(lobby.getGameId()).thenReturn(gameId);
+        when(lobby.getGameId()).thenReturn(GAME_ID);
 
-        LobbyState result = lobbyController.createLobby(true, playerName);
+        LobbyState result = lobbyController.createLobby(true, PLAYER_NAME);
 
         verify(lobbyManager).createLobby(true);
-        verify(lobby).addPlayer(playerName);
-        verify(messaging).convertAndSend("/topic/lobby/" + gameId, result);
+        verify(lobby).addPlayer(PLAYER_NAME);
+        verify(messaging).convertAndSend("/topic/lobby/" + GAME_ID, result);
         assertNotNull(result);
     }
 
     @Test
     void joinLobby_WhenLobbyNotFound_ShouldReturnNotFound() {
-        when(lobbyManager.getLobby(gameId)).thenReturn(null);
+        when(lobbyManager.getLobby(GAME_ID)).thenReturn(null);
 
-        ResponseEntity<JoinResponse> response = lobbyController.joinLobby(gameId, playerName);
+        ResponseEntity<JoinResponse> response = lobbyController.joinLobby(GAME_ID, PLAYER_NAME);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("Lobby mit der ID " + gameId + " wurde nicht gefunden.",
+        assertEquals("Lobby mit der ID " + GAME_ID + " wurde nicht gefunden.",
                 response.getBody().getMessage());
     }
 
     @Test
     void joinLobby_WhenLobbyFull_ShouldReturnBadRequest() {
-        when(lobbyManager.getLobby(gameId)).thenReturn(lobby);
-        when(lobby.addPlayer(playerName)).thenReturn(false);
+        when(lobbyManager.getLobby(GAME_ID)).thenReturn(lobby);
+        when(lobby.addPlayer(PLAYER_NAME)).thenReturn(false);
 
-        ResponseEntity<JoinResponse> response = lobbyController.joinLobby(gameId, playerName);
+        ResponseEntity<JoinResponse> response = lobbyController.joinLobby(GAME_ID, PLAYER_NAME);
 
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertEquals("Lobby ist voll oder bereits gestartet.",
@@ -80,23 +80,23 @@ class LobbyControllerTest {
 
     @Test
     void joinLobby_WhenSuccess_ShouldReturnOkAndBroadcast() {
-        when(lobbyManager.getLobby(gameId)).thenReturn(lobby);
-        when(lobby.addPlayer(playerName)).thenReturn(true);
+        when(lobbyManager.getLobby(GAME_ID)).thenReturn(lobby);
+        when(lobby.addPlayer(PLAYER_NAME)).thenReturn(true);
 
-         ResponseEntity<JoinResponse> response = lobbyController.joinLobby(gameId, playerName);
+         ResponseEntity<JoinResponse> response = lobbyController.joinLobby(GAME_ID, PLAYER_NAME);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(playerName + " ist der Lobby " + gameId + " beigetreten.",
+        assertEquals(PLAYER_NAME + " ist der Lobby " + GAME_ID + " beigetreten.",
                 response.getBody().getMessage());
 
-        verify(messaging).convertAndSend(eq("/topic/lobby/" + gameId), any(LobbyState.class));
+        verify(messaging).convertAndSend(eq("/topic/lobby/" + GAME_ID), any(LobbyState.class));
     }
 
     @Test
     void leaveLobby_WhenLobbyNotFound_ShouldReturnNotFound() {
-        when(lobbyManager.getLobby(gameId)).thenReturn(null);
+        when(lobbyManager.getLobby(GAME_ID)).thenReturn(null);
 
-        ResponseEntity<String> response = lobbyController.leaveLobby(gameId, playerName);
+        ResponseEntity<String> response = lobbyController.leaveLobby(GAME_ID, PLAYER_NAME);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         assertEquals("Lobby nicht gefunden", response.getBody());
@@ -105,27 +105,27 @@ class LobbyControllerTest {
     @Test
     void leaveLobby_WhenSuccess_ShouldRemovePlayerAndBroadcast() {
 
-        when(lobbyManager.getLobby(gameId)).thenReturn(lobby);
+        when(lobbyManager.getLobby(GAME_ID)).thenReturn(lobby);
         when(lobby.getPlayers()).thenReturn(Set.of("otherPlayer"));
 
-        ResponseEntity<String> response = lobbyController.leaveLobby(gameId, playerName);
+        ResponseEntity<String> response = lobbyController.leaveLobby(GAME_ID, PLAYER_NAME);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(playerName + " hat die Lobby verlassen", response.getBody());
+        assertEquals(PLAYER_NAME + " hat die Lobby verlassen", response.getBody());
 
-        verify(lobby).removePlayer(playerName);
-        verify(messaging).convertAndSend(eq("/topic/lobby/" + gameId), any(LobbyState.class));
+        verify(lobby).removePlayer(PLAYER_NAME);
+        verify(messaging).convertAndSend(eq("/topic/lobby/" + GAME_ID), any(LobbyState.class));
     }
 
     @Test
     void leaveLobby_WhenEmptyAfterLeave_ShouldRemoveLobby() {
-        when(lobbyManager.getLobby(gameId)).thenReturn(lobby);
+        when(lobbyManager.getLobby(GAME_ID)).thenReturn(lobby);
         when(lobby.getPlayers()).thenReturn(Set.of());
 
-        ResponseEntity<String> response = lobbyController.leaveLobby(gameId, playerName);
+        ResponseEntity<String> response = lobbyController.leaveLobby(GAME_ID, PLAYER_NAME);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(lobbyManager).removeLobby(gameId);
+        verify(lobbyManager).removeLobby(GAME_ID);
         verify(messaging, never()).convertAndSend(any(String.class), any(Object.class));
     }
 
@@ -142,18 +142,18 @@ class LobbyControllerTest {
 
     @Test
     void getLobbyStatus_WhenLobbyNotFound_ShouldReturnNotFound() {
-        when(lobbyManager.getLobby(gameId)).thenReturn(null);
+        when(lobbyManager.getLobby(GAME_ID)).thenReturn(null);
 
-        ResponseEntity<LobbyState> response = lobbyController.getLobbyStatus(gameId);
+        ResponseEntity<LobbyState> response = lobbyController.getLobbyStatus(GAME_ID);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
     @Test
     void getLobbyStatus_WhenLobbyExists_ShouldReturnState() {
-        when(lobbyManager.getLobby(gameId)).thenReturn(lobby);
+        when(lobbyManager.getLobby(GAME_ID)).thenReturn(lobby);
 
-        ResponseEntity<LobbyState> response = lobbyController.getLobbyStatus(gameId);
+        ResponseEntity<LobbyState> response = lobbyController.getLobbyStatus(GAME_ID);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());

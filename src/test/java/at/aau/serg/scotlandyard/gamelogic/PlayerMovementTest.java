@@ -1,6 +1,6 @@
 package at.aau.serg.scotlandyard.gamelogic;
 
-
+import at.aau.serg.scotlandyard.dto.GameMapper;
 import at.aau.serg.scotlandyard.gamelogic.board.Board;
 import at.aau.serg.scotlandyard.gamelogic.board.Edge;
 import at.aau.serg.scotlandyard.gamelogic.player.Detective;

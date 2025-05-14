@@ -15,7 +15,6 @@ public class GameSocketController {
 
     private final GameManager gameManager;
     private final SimpMessagingTemplate messaging;
-    private static final String TOPIC_GAME_LITERAL = "/topic/game/";
 
     public GameSocketController(GameManager gameManager, SimpMessagingTemplate messaging) {
         this.gameManager = gameManager;
@@ -29,7 +28,7 @@ public class GameSocketController {
         if (game == null) return;
 
         List<Map.Entry<Integer, Ticket>> allowedMoves = game.getAllowedMoves(playerName);
-        messaging.convertAndSend(TOPIC_GAME_LITERAL + gameId + "/allowedMoves/" + playerName, allowedMoves);
+        messaging.convertAndSend("/topic/game/" + gameId + "/allowedMoves/" + playerName, allowedMoves);
     }
 
 
@@ -40,7 +39,7 @@ public class GameSocketController {
 
         boolean success = game.movePlayer(request.playerName(), request.target(), request.ticket());
         if (success) {
-            messaging.convertAndSend(TOPIC_GAME_LITERAL + request.gameId() + "/state", game);
+            messaging.convertAndSend("/topic/game/" + request.gameId() + "/state", game);
         }
     }
 
@@ -56,7 +55,7 @@ public class GameSocketController {
                 request.secondTarget(), request.secondTicket()
         );
         if (success) {
-            messaging.convertAndSend(TOPIC_GAME_LITERAL + request.gameId() + "/state", game);
+            messaging.convertAndSend("/topic/game/" + request.gameId() + "/state", game);
         }
     }
 
@@ -67,7 +66,7 @@ public class GameSocketController {
         if (game == null) return;
 
         String position = game.getVisibleMrXPosition();
-        messaging.convertAndSend(TOPIC_GAME_LITERAL + gameId + "/mrXPosition", position);
+        messaging.convertAndSend("/topic/game/" + gameId + "/mrXPosition", position);
     }
 
 
@@ -81,7 +80,7 @@ public class GameSocketController {
             case DETECTIVE -> "Detektive haben gewonnen!";
             default -> "Spiel läuft noch.";
         };
-        messaging.convertAndSend(TOPIC_GAME_LITERAL + gameId + "/winner", winner);
+        messaging.convertAndSend("/topic/game/" + gameId + "/winner", winner);
     }
 
   

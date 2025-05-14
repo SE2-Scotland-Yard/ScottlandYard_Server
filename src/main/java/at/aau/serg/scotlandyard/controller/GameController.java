@@ -11,24 +11,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/game")
 public class GameController {
 
     public static final String GAME_NOT_FOUND = "Spiel nicht gefunden";
-    public static final String MESSAGE = "message";
     private final GameManager gameManager;
-    private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
     public GameController(GameManager gameManager) {
         this.gameManager = gameManager;
     }
 
     @GetMapping("/allowedMoves")
-    public ResponseEntity<List<Map.Entry<Integer, String>>> getMoves(
+    public ResponseEntity<?> getMoves(
             @RequestParam String gameId,
             @RequestParam String name
     ) {
@@ -36,13 +32,13 @@ public class GameController {
 
         if (game == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(List.of(Map.entry(-1, "Game mit ID '" + gameId + "' nicht gefunden.")));
+                    .body("Game mit ID '" + gameId + "' nicht gefunden.");
         }
 
         List<Map.Entry<Integer, String>> allowedMoves = game.getAllowedMoves(name).stream()
                 .map(entry -> Map.entry(entry.getKey(), entry.getValue().name())) // Ticket zu String konvertieren
                 .toList();
-        logger.info("Allowed moves: {}",allowedMoves);
+        System.out.println(allowedMoves);
         return ResponseEntity.ok(allowedMoves);
     }
     @PostMapping("/move")
@@ -59,36 +55,36 @@ public class GameController {
         try {
             ticket = Ticket.valueOf(gotTicket);
         } catch (IllegalArgumentException e) {
-            response.put(MESSAGE, "Ungültiges Ticket: " + gotTicket);
+            response.put("message", "Ungültiges Ticket: " + gotTicket);
             return response;
         }
 
         // 2. Spiel validieren
         GameState game = gameManager.getGame(gameId);
         if (game == null) {
-            response.put(MESSAGE, "Spiel nicht gefunden!");
+            response.put("message", "Spiel nicht gefunden!");
             return response;
         }
 
         // 3. Spieler existiert?
         if (!game.getAllPlayers().containsKey(name)) {
-            response.put(MESSAGE, "Spieler " + name + " existiert nicht!");
+            response.put("message", "Spieler " + name + " existiert nicht!");
             return response;
         }
 
         // 4. Zug durchführen
         if (!game.movePlayer(name, to, ticket)) {
-            response.put(MESSAGE, "Ungültiger Zug!");
+            response.put("message", "Ungültiger Zug!");
             return response;
         }
 
         // 5. Gewinner prüfen
         if (game.getWinner() != GameState.Winner.NONE) {
-            response.put(MESSAGE, getWinner(gameId));
+            response.put("message", getWinner(gameId));
             return response;
         }
 
-        response.put(MESSAGE, "Spieler " + name + " bewegt sich zu " + to + " in Spiel " + gameId);
+        response.put("message", "Spieler " + name + " bewegt sich zu " + to + " in Spiel " + gameId);
         return response;
     }
 
