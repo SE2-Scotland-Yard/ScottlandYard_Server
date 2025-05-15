@@ -14,9 +14,6 @@ public class LobbyState {
     private boolean isStarted;
     private int maxPlayers;
     private int currentPlayerCount;
-    private int position;
-
-    private Map<String, Integer> playerPositions; // Spielername → Positionen
 
     public LobbyState(String gameId,
                       List<String> players,

@@ -47,8 +47,13 @@ public class GameState {
 
     public boolean canMove(String playerName, int target, Ticket ticket) {
         Player player = players.get(playerName);
-        return player != null
-                && getAllowedMoves(playerName).contains(target)
+        if (player == null) {
+            return false;
+        }
+        boolean isTargetReachable = getAllowedMoves(playerName).stream()
+                .anyMatch(entry -> entry.getKey() == target && entry.getValue() == ticket);
+
+        return isTargetReachable
                 && player.getTickets().hasTicket(ticket)
                 && (player instanceof MrX || !isPositionOccupied(target));
     }
