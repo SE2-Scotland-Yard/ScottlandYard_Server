@@ -1,7 +1,7 @@
 package at.aau.serg.scotlandyard.dto;
 
 import at.aau.serg.scotlandyard.gamelogic.Lobby;
-import at.aau.serg.scotlandyard.gamelogic.LobbyManager;
+
 import at.aau.serg.scotlandyard.gamelogic.Role;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-public class LobbyMapperTest {
+class LobbyMapperTest {
 
     @Test
     void testUtilityClassCannotBeInstantiated() {

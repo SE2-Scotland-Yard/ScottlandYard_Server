@@ -8,6 +8,10 @@ import java.util.Map;
 
 public class GameMapper {
 
+    private GameMapper() {
+        throw new UnsupportedOperationException("Utility class");
+    }
+
     public static GameUpdate mapToGameUpdate(String gameId, Map<String, Player> playerMap, String currentPlayer) {
         Map<String, Integer> playerPositions = new HashMap<>();
 
@@ -23,11 +27,3 @@ public class GameMapper {
     }
 }
 
-/* beispielaufruf:
-
-GameUpdate update = GameMapper.mapToGameUpdate(
-    gameId,
-    gameState.getAllPlayers()
-);
-
- */

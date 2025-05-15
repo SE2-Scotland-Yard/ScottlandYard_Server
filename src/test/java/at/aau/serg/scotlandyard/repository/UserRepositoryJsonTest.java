@@ -9,7 +9,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
-public class UserRepositoryJsonTest {
+class UserRepositoryJsonTest {
 
     private static final String PROD_FILE = "users.json";
     private static final String TEST_FILE = "users_test.json";
@@ -73,12 +73,5 @@ public class UserRepositoryJsonTest {
         assertThat(repo.findByUsername("dave")).isEmpty();
     }
 
-    /*@Test
-    void testGeneratedIdsAreIncremented() {
-        repo.save(new User("eve", "pw5"));
-        repo.save(new User("frank", "pw6"));
-        List<User> users = repo.findAll();
-        assertThat(users.get(0).getId()).isNotNull();
-        assertThat(users.get(1).getId()).isEqualTo(users.get(0).getId() + 1);
-    }*/
+
 }

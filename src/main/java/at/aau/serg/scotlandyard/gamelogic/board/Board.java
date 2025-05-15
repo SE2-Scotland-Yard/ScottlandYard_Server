@@ -26,7 +26,7 @@ public class Board {
     }
 
     public Set<Integer> getAllNodes() {
-        Set<Integer> allNodes = adjacencyList.keySet();
+        Set<Integer> allNodes = new HashSet<>();
 
 
         for (List<Edge> edges : adjacencyList.values()) {

@@ -1,9 +1,6 @@
 package at.aau.serg.scotlandyard.dto;
 
-import at.aau.serg.scotlandyard.gamelogic.player.Player;
 
-import javax.swing.plaf.IconUIResource;
-import java.util.List;
 import java.util.Map;
 
 public class GameUpdate {

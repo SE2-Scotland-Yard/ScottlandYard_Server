@@ -13,7 +13,7 @@ import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
-public class GameSocketControllerTest {
+class GameSocketControllerTest {
 
     private GameManager gameManager;
     private SimpMessagingTemplate messaging;
@@ -36,7 +36,7 @@ public class GameSocketControllerTest {
 
         controller.handleAllowedMoves("game1", "Anna");
 
-        verify(messaging).convertAndSend(eq("/topic/game/game1/allowedMoves/Anna"), eq(moves));
+        verify(messaging).convertAndSend("/topic/game/game1/allowedMoves/Anna", moves);
     }
 
     @Test
@@ -54,7 +54,7 @@ public class GameSocketControllerTest {
 
         controller.handleMove(req);
 
-        verify(messaging).convertAndSend(eq("/topic/game/g1/state"), eq(gameState));
+        verify(messaging).convertAndSend("/topic/game/g1/state", gameState);
     }
 
     @Test
@@ -86,7 +86,7 @@ public class GameSocketControllerTest {
 
         controller.handleDoubleMove(req);
 
-        verify(messaging).convertAndSend(eq("/topic/game/g2/state"), eq(gameState));
+        verify(messaging).convertAndSend("/topic/game/g2/state", gameState);
     }
 
     @Test
@@ -117,7 +117,7 @@ public class GameSocketControllerTest {
 
         controller.handleMrXPosition("g3");
 
-        verify(messaging).convertAndSend(eq("/topic/game/g3/mrXPosition"), eq("123"));
+        verify(messaging).convertAndSend("/topic/game/g3/mrXPosition","123");
     }
 
     @Test
@@ -136,7 +136,7 @@ public class GameSocketControllerTest {
 
         controller.handleWinner("g4");
 
-        verify(messaging).convertAndSend(eq("/topic/game/g4/winner"), eq("Mr.X hat gewonnen!"));
+        verify(messaging).convertAndSend("/topic/game/g4/winner","Mr.X hat gewonnen!");
     }
 
     @Test
@@ -146,7 +146,7 @@ public class GameSocketControllerTest {
 
         controller.handleWinner("g5");
 
-        verify(messaging).convertAndSend(eq("/topic/game/g5/winner"), eq("Detektive haben gewonnen!"));
+        verify(messaging).convertAndSend("/topic/game/g5/winner","Detektive haben gewonnen!");
     }
 
     @Test
@@ -156,7 +156,7 @@ public class GameSocketControllerTest {
 
         controller.handleWinner("g6");
 
-        verify(messaging).convertAndSend(eq("/topic/game/g6/winner"), eq("Spiel läuft noch."));
+        verify(messaging).convertAndSend("/topic/game/g6/winner", "Spiel läuft noch.");
     }
 
     @Test
