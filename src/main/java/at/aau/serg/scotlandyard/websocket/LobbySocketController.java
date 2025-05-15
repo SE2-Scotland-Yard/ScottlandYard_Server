@@ -67,8 +67,8 @@ public class LobbySocketController {
             game.initRoundManager(detectives, mrX); // RoundManager korrekt initialisieren
 
 
-
-            logger.info("Sending GameUpdate to /topic/game/{}", gameId);
+            String sanitizedGameId = gameId.replaceAll("[\\n\\r\\t]", "_");
+            logger.info("Sending GameUpdate to /topic/game/{}", sanitizedGameId);
             logger.info("Aktueller Spieler im Mapper: {}", game.getCurrentPlayerName());
             messaging.convertAndSend("/topic/game/" + gameId, GameMapper.mapToGameUpdate(gameId, game.getAllPlayers(), game.getCurrentPlayerName()));//positionen
 

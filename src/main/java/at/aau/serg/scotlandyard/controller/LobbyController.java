@@ -63,8 +63,8 @@ public class LobbyController {
             return ResponseEntity.badRequest()
                     .body(new JoinResponse("Lobby ist voll oder bereits gestartet."));
         }
-
-        logger.info("WS-Broadcast: /topic/lobby/{}" , gameId);
+        String sanitizedGameId = gameId.replaceAll("[\\n\\r\\t]", "_");
+        logger.info("WS-Broadcast: /topic/lobby/{}" , sanitizedGameId);
         logger.info("Spieler in der Lobby: {}" , lobby.getPlayers());
 
         LobbyState state = LobbyMapper.toLobbyState(lobby);
