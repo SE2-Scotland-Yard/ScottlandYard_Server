@@ -43,6 +43,7 @@ public class LobbySocketController {
 
             messaging.convertAndSend(TOPIC_LOBBY_LITERAL + gameId, LobbyMapper.toLobbyState(lobby));//lobbyUpdate
             GameState game = initializeGame(gameId, lobby); // Spiel initialisieren
+            logger.info(game.toString());
 
         }
     }
@@ -106,16 +107,5 @@ public class LobbySocketController {
             logger.info("→ Eigene Position an MrX gesendet: {}", position);
         }
     }
-
-
-
-
-    @MessageMapping("/lobby/game/update")
-    public void gameUpdate(String gameId, GameState game) {
-
-
-    }
-
-
-
+    
 }
