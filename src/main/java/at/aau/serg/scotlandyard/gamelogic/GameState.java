@@ -75,7 +75,7 @@ public class GameState {
 
         return connections.stream()
                 .filter(edge -> p.getTickets().hasTicket(edge.getTicket()))
-                .filter(edge -> !isPositionOccupied(edge.getTo()) || p instanceof MrX)
+                .filter(edge -> !isPositionOccupied(edge.getTo()))
                 .map(edge -> Map.entry(edge.getTo(), edge.getTicket()))
                 .toList();
     }
@@ -177,7 +177,13 @@ public class GameState {
     }
 
     public boolean isPositionOccupied(int position) {
-        return players.values().stream()
+        Map<String, Player> detectives = new HashMap<>();
+        for (Player p : players.values()) {
+            if(p instanceof Detective){
+                detectives.put(p.getName(), p);
+            }
+        }
+        return detectives.values().stream()
                 .anyMatch(p -> p.getPosition() == position);
     }
 

@@ -2,6 +2,7 @@ package at.aau.serg.scotlandyard.gamelogic;
 
 import at.aau.serg.scotlandyard.gamelogic.player.*;
 import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +11,7 @@ import java.util.*;
 
 
 public class RoundManager {
+    @Getter
     private final List<Detective>detectives;
     private final MrX mrX;
     private int mrXPosition;
@@ -93,9 +95,6 @@ public class RoundManager {
         return currentRound;
     }
 
-    public List<Detective> getDetectives() {
-        return detectives;
-    }
 
     public MrX getMrX(){
         return mrX;
