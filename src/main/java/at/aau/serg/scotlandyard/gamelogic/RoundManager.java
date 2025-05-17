@@ -1,24 +1,30 @@
 package at.aau.serg.scotlandyard.gamelogic;
 
 import at.aau.serg.scotlandyard.gamelogic.player.*;
+import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
+import lombok.Getter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.util.*;
 
 
 public class RoundManager {
+    @Getter
     private final List<Detective>detectives;
     private final MrX mrX;
     private int mrXPosition;
     private final List<Player>turnOrder;
 
-    private Map<Player,Integer> playerPosition = new HashMap<>();
+    private Map<String,Integer> currentplayerPosition = new HashMap<>();
 
     private int currentPlayerTurn = 0; //index that indicates which player is next
     private int currentRound = 1;
     private static final int MAXROUNDS = 24;
 
     private final List<Integer> revealRounds = Arrays.asList(3,8,13,18,24); //for Mr.X
+    private static final Logger logger = LoggerFactory.getLogger(GameState.class);
 
     public RoundManager(List<Detective> detectives, MrX mrX) {
         this.detectives = detectives;
@@ -33,30 +39,31 @@ public class RoundManager {
     }
 
 
-    public Map<Player,Integer> getPlayerPositions(){
+    public Map<String,Integer> getPlayerPositions(){
 
         for(Player p : turnOrder){
             if(p instanceof Detective){
-                playerPosition.put(p,p.getPosition());
+                currentplayerPosition.put(p.getName(),p.getPosition());
             }
             else if(p instanceof MrX){
                 if(revealRounds.contains(currentRound)){
                     mrXPosition=p.getPosition();
 
                 }
-                playerPosition.put(p,mrXPosition);
+                if(currentRound>=3) {
+                    currentplayerPosition.put(p.getName(), mrXPosition);
+                }
             }
 
 
         }
-
-
-        return playerPosition;
+        logger.info("Current Player Positions: {}", currentplayerPosition);
+        return currentplayerPosition;
     }
 
     public void nextTurn(){
         currentPlayerTurn++;
-
+        logger.info("Current Turn: {}", currentRound);
         if(currentPlayerTurn >= turnOrder.size()){
             currentPlayerTurn = 0;
             currentRound++;
@@ -80,15 +87,14 @@ public class RoundManager {
         return currentRound > MAXROUNDS || isMrXCaptured();
     }
 
-
+    public void addMrXTicket(Ticket ticket){
+        mrX.addTicket(ticket);
+    }
 
     public int getCurrentRound() {
         return currentRound;
     }
 
-    public List<Detective> getDetectives() {
-        return detectives;
-    }
 
     public MrX getMrX(){
         return mrX;

@@ -29,6 +29,20 @@ public class MrX extends Player {
         return new PlayerTickets(initialTickets);
     }
 
+    public void addTicket(Ticket ticket){
+        switch (ticket) {
+            case TAXI:
+                tickets.addTicket(Ticket.TAXI);
+                break;
+            case BUS:
+                tickets.addTicket(Ticket.BUS);
+                break;
+            case UNDERGROUND:
+                tickets.addTicket(Ticket.UNDERGROUND);
+                break;
+        }
+    }
+
     public void moveDouble(int firstTo, Ticket firstTicket, int secondTo, Ticket secondTicket, Board board) {
         if (!tickets.hasTicket(Ticket.DOUBLE)) {
             throw new IllegalArgumentException("Kein DOUBLE-Ticket verfügbar!");
