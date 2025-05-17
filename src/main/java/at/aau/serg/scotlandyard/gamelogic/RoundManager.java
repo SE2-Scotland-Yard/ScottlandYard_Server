@@ -1,6 +1,9 @@
 package at.aau.serg.scotlandyard.gamelogic;
 
 import at.aau.serg.scotlandyard.gamelogic.player.*;
+import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.util.*;
@@ -19,6 +22,7 @@ public class RoundManager {
     private static final int MAXROUNDS = 24;
 
     private final List<Integer> revealRounds = Arrays.asList(3,8,13,18,24); //for Mr.X
+    private static final Logger logger = LoggerFactory.getLogger(GameState.class);
 
     public RoundManager(List<Detective> detectives, MrX mrX) {
         this.detectives = detectives;
@@ -52,7 +56,7 @@ public class RoundManager {
 
         }
 
-
+        logger.info("Current Player Positions: {}", playerPosition);
         return playerPosition;
     }
 
@@ -82,7 +86,9 @@ public class RoundManager {
         return currentRound > MAXROUNDS || isMrXCaptured();
     }
 
-
+    public void addMrXTicket(Ticket ticket){
+        mrX.addTicket(ticket);
+    }
 
     public int getCurrentRound() {
         return currentRound;

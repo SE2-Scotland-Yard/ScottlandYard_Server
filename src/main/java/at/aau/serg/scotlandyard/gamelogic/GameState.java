@@ -116,6 +116,8 @@ public class GameState {
             currentRound++;
             roundManager.nextTurn();
 
+            roundManager.addMrXTicket(ticket);
+
             String nextPlayer = getCurrentPlayerName();
             logger.info("➡️ currentRound: {}, nextPlayer: {}", currentRound, nextPlayer);
             messaging.convertAndSend("/topic/game/" + gameId,
