@@ -18,4 +18,8 @@
   "id" : 5,
   "username" : "1",
   "password" : "$2a$10$E9.48hXakRKzWJDVn.15Eej5/g6UZpWmaPbKw1F78EqmRUtwit6na"
+}, {
+  "id" : 6,
+  "username" : "2",
+  "password" : "$2a$10$UdCC0t5L2UgsnophZXZrN.2T/uTZXF9EC0sAdGazdSn0iiWh4ytBC"
 } ]

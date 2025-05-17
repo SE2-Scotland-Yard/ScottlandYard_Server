@@ -12,7 +12,7 @@ public class RoundManager {
     private int mrXPosition;
     private final List<Player>turnOrder;
 
-    private Map<Player,Integer> playerPosition = new HashMap<>();
+    private Map<String,Integer> playerPosition = new HashMap<>();
 
     private int currentPlayerTurn = 0; //index that indicates which player is next
     private int currentRound = 1;
@@ -33,18 +33,20 @@ public class RoundManager {
     }
 
 
-    public Map<Player,Integer> getPlayerPositions(){
+    public Map<String,Integer> getPlayerPositions(){
 
         for(Player p : turnOrder){
             if(p instanceof Detective){
-                playerPosition.put(p,p.getPosition());
+                playerPosition.put(p.getName(),p.getPosition());
             }
             else if(p instanceof MrX){
                 if(revealRounds.contains(currentRound)){
                     mrXPosition=p.getPosition();
 
                 }
-                playerPosition.put(p,mrXPosition);
+                if(currentRound>3&&!revealRounds.contains(currentRound)) {
+                    playerPosition.put(p.getName(), mrXPosition);
+                }
             }
 
 

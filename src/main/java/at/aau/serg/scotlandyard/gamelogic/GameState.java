@@ -10,6 +10,7 @@ import at.aau.serg.scotlandyard.gamelogic.player.MrX;
 import at.aau.serg.scotlandyard.gamelogic.player.Player;
 import at.aau.serg.scotlandyard.gamelogic.player.tickets.Ticket;
 
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -26,11 +27,14 @@ public class GameState {
     private final String gameId;
     private final Board board;
     private final Map<String, Player> players = new HashMap<>();
+    @Getter
     private RoundManager roundManager;
     private int currentRound = 1;
     private final List<Integer> revealRounds = List.of(3, 8, 13, 18, 24); // Sichtbarkeitsrunden
     private final Map<Integer, MrXMove> mrXHistory = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(GameState.class);
+
+    Map<String, Integer> playerPositions = new HashMap<>();
 
 
 
@@ -89,6 +93,7 @@ public class GameState {
 
     public boolean movePlayer(String name, int to, Ticket ticket) {
         Player p = players.get(name);
+        playerPositions = roundManager.getPlayerPositions();
         if (p instanceof MrX mrX && mrX.isValidMove(to, ticket, board)) {
                 mrX.move(to, ticket, board);
                 mrXHistory.put(currentRound, new MrXMove(to, ticket));
@@ -100,7 +105,7 @@ public class GameState {
             messaging.convertAndSend("/topic/game/" + gameId,
                     GameMapper.mapToGameUpdate(
                             gameId,
-                            getAllPlayers(),
+                            playerPositions,
                             getCurrentPlayerName()
                     )
             );
@@ -116,7 +121,7 @@ public class GameState {
             messaging.convertAndSend("/topic/game/" + gameId,
                     GameMapper.mapToGameUpdate(
                             gameId,
-                            getAllPlayers(),
+                            playerPositions,
                             getCurrentPlayerName()
                     )
             );
