@@ -93,12 +93,14 @@ public class GameState {
 
     public boolean movePlayer(String name, int to, Ticket ticket) {
         Player p = players.get(name);
-        playerPositions = roundManager.getPlayerPositions();
+
         if (p instanceof MrX mrX && mrX.isValidMove(to, ticket, board)) {
                 mrX.move(to, ticket, board);
                 mrXHistory.put(currentRound, new MrXMove(to, ticket));
                 currentRound++;
                 roundManager.nextTurn();
+
+            playerPositions = roundManager.getPlayerPositions();
 
             String nextPlayer = getCurrentPlayerName();
             logger.info("➡️ currentRound: {}, nextPlayer: {}", currentRound, nextPlayer);
@@ -113,8 +115,10 @@ public class GameState {
         }
         if (p != null && p.isValidMove(to, ticket, board)) {
             p.move(to, ticket, board);
+            playerPositions = roundManager.getPlayerPositions();
             currentRound++;
             roundManager.nextTurn();
+
 
             roundManager.addMrXTicket(ticket);
 
