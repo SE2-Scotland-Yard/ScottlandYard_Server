@@ -56,9 +56,11 @@ class RoundManagerTest {
         when(detective2.getPosition()).thenReturn(20);
 
 
-        Map<Player, Integer> positions = roundManager.getPlayerPositions();
-        assertEquals(10, positions.get(detective1));
-        assertEquals(20, positions.get(detective2));
+        Map<String, Integer> positions = roundManager.getPlayerPositions();
+
+        assertEquals(10, positions.get("Detective1"));
+        assertEquals(20, positions.get("Detective2"));
+        assertNull(positions.get("MrX"));
 
     }
 
