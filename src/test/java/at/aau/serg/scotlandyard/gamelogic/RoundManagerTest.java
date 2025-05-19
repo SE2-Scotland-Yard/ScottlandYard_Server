@@ -32,15 +32,21 @@ class RoundManagerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        //Setup Roundmanager
-        ArrayList<Detective>detectives = new ArrayList<>();
-        detectives.add(detective1);
-        detectives.add(detective2);
-        roundManager = new RoundManager(detectives,mrX);
+        when(detective1.getName()).thenReturn("Detective1");
+        when(detective2.getName()).thenReturn("Detective2");
+        when(mrX.getName()).thenReturn("MrX");
 
         //Setup positions
         when(detective1.getPosition()).thenReturn(4);
+        when(detective2.getPosition()).thenReturn(0);
         when(mrX.getPosition()).thenReturn(5);
+
+        //Setup Roundmanager
+        ArrayList<Detective> detectives = new ArrayList<>();
+        detectives.add(detective1);
+        detectives.add(detective2);
+
+        roundManager = new RoundManager(detectives,mrX);
 
     }
 
