@@ -32,15 +32,21 @@ class RoundManagerTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        //Setup Roundmanager
-        ArrayList<Detective>detectives = new ArrayList<>();
-        detectives.add(detective1);
-        detectives.add(detective2);
-        roundManager = new RoundManager(detectives,mrX);
+        when(detective1.getName()).thenReturn("Detective1");
+        when(detective2.getName()).thenReturn("Detective2");
+        when(mrX.getName()).thenReturn("MrX");
 
         //Setup positions
         when(detective1.getPosition()).thenReturn(4);
+        when(detective2.getPosition()).thenReturn(0);
         when(mrX.getPosition()).thenReturn(5);
+
+        //Setup Roundmanager
+        ArrayList<Detective> detectives = new ArrayList<>();
+        detectives.add(detective1);
+        detectives.add(detective2);
+
+        roundManager = new RoundManager(detectives,mrX);
 
     }
 
@@ -50,9 +56,11 @@ class RoundManagerTest {
         when(detective2.getPosition()).thenReturn(20);
 
 
-        Map<Player, Integer> positions = roundManager.getPlayerPositions();
-        assertEquals(10, positions.get(detective1));
-        assertEquals(20, positions.get(detective2));
+        Map<String, Integer> positions = roundManager.getPlayerPositions();
+
+        assertEquals(10, positions.get("Detective1"));
+        assertEquals(20, positions.get("Detective2"));
+        assertNull(positions.get("MrX"));
 
     }
 
@@ -102,13 +110,13 @@ class RoundManagerTest {
         when(mrX.getPosition()).thenReturn(100);
         advanceToRound(3);
 
-        Map<Player, Integer> positions = roundManager.getPlayerPositions();
-        assertEquals(100, positions.get(mrX));
+        Map<String, Integer> positions = roundManager.getPlayerPositions();
+        assertEquals(100, positions.get("MrX"));
 
         when(mrX.getPosition()).thenReturn(150);
         advanceToRound(8);
         positions = roundManager.getPlayerPositions();
-        assertEquals(150, positions.get(mrX));
+        assertEquals(150, positions.get("MrX"));
     }
 
     @Test
