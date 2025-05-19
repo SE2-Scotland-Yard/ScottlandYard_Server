@@ -110,13 +110,13 @@ class RoundManagerTest {
         when(mrX.getPosition()).thenReturn(100);
         advanceToRound(3);
 
-        Map<Player, Integer> positions = roundManager.getPlayerPositions();
-        assertEquals(100, positions.get(mrX));
+        Map<String, Integer> positions = roundManager.getPlayerPositions();
+        assertEquals(100, positions.get("MrX"));
 
         when(mrX.getPosition()).thenReturn(150);
         advanceToRound(8);
         positions = roundManager.getPlayerPositions();
-        assertEquals(150, positions.get(mrX));
+        assertEquals(150, positions.get("MrX"));
     }
 
     @Test
